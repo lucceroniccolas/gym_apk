@@ -4,7 +4,7 @@ class Usuario {
   int idUsuario;
   String nombre;
   String apellido;
-  Rol rol;
+  Rol? rol;
   Usuario(
       {required this.idUsuario,
       required this.nombre,

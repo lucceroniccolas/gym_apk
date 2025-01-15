@@ -2,27 +2,16 @@ import 'package:gym_apk/domain/entities/usuario.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 
 class ModificarUsuarioCDU {
-  final RepoUsuario usuarioRepo;
-  ModificarUsuarioCDU(this.usuarioRepo);
+  final RepoUsuario _usuarioRepo;
+  ModificarUsuarioCDU(this._usuarioRepo);
 
-  Future<void> execute(Usuario usuario) async {
-    //validaciones
-    if (usuario.idUsuario == 0 || usuario.idUsuario > 0) {
-      throw Exception("El ID del usuario no es válido.");
-    }
-    if (usuario.nombre.isEmpty || usuario.apellido.isEmpty) {
-      throw Exception("El nombre y apellido no pueden estar vacíos.");
-    }
-
-    //llamado al repositorio
-
+  Future<void> call(Usuario usuarioModificado) async {
     final usuarioExistente =
-        await usuarioRepo.obtenerUsuarioPorId(usuario.idUsuario);
+        await _usuarioRepo.obtenerUsuarioPorId(usuarioModificado.idUsuario);
     if (usuarioExistente == null) {
-      throw Exception("El usuario no existe");
+      throw Exception(
+          "El usuario con id ${usuarioModificado.idUsuario} no existe");
     }
-
-    await usuarioRepo.crearUsuario(
-        usuario); //reutilizamos el método crear usuario para guardar los cambios
+    await _usuarioRepo.crearUsuario(usuarioModificado);
   }
 }
