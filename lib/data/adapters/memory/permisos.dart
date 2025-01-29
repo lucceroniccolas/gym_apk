@@ -1,17 +1,46 @@
 import 'package:gym_apk/domain/entities/permisos.dart';
+import 'package:gym_apk/domain/repository/repo_permisos.dart';
 
+class MemoriaPermisosImpl implements RepoPermisos {
+  static final MemoriaPermisosImpl _instancia = MemoriaPermisosImpl._privado();
 
+  MemoriaPermisosImpl._privado();
 
+  factory MemoriaPermisosImpl() {
+    return (_instancia);
+  }
 
+  final List<Permiso> _permisos = [];
 
+  @override
+  Future<void> borarPermiso(int idPermiso) async {
+    _permisos.removeWhere((permiso) => permiso.idPermiso == idPermiso);
+  }
 
-final permisoCrearClase = Permiso(idPermiso: 1, descripcion: "Crear Clase");
+  @override
+  Future<void> crearPermiso(Permiso permiso) async {
+    _permisos.add(permiso);
+  }
 
-final permisoModificarClase =
-    Permiso(idPermiso: 2, descripcion: "Modificar Clase");
+  @override
+  Future<void> modificarPermiso(Permiso permisoModificado) async {
+    final index = _permisos.indexWhere(
+        (permiso) => permiso.idPermiso == permisoModificado.idPermiso);
+    if (index != -1) {
+      _permisos[index] = permisoModificado;
+    } else {
+      throw Exception(
+          "Usuario con id ${permisoModificado.idPermiso} no encontrado");
+    }
+  }
 
-final permisoEliminarClase =
-    Permiso(idPermiso: 3, descripcion: "Eliminar Clase");
+  @override
+  Future<Permiso?> obtenerPermisoPorId(int idPermiso) async {
+    return (_permisos.firstWhere((permiso) => permiso.idPermiso == idPermiso));
+  }
 
-final permisoInscribirseClase =
-    Permiso(idPermiso: 4, descripcion: "Inscribirse a clase");
+  @override
+  Future<List<Permiso>> obtenerTodosLosPermisos() async {
+    return (_permisos);
+  }
+}

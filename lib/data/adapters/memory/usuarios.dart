@@ -3,23 +3,24 @@ import 'dart:collection';
 import 'package:gym_apk/domain/entities/usuario.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 
-class MemoriaUsuarioRepositorio implements RepoUsuario {
-  static final MemoriaUsuarioRepositorio _instancia =
-      MemoriaUsuarioRepositorio._privado();
+class MemoriaUsuarioImpl implements RepoUsuario {
+  static final MemoriaUsuarioImpl _instancia = MemoriaUsuarioImpl._privado();
 
   ///_instancia es una instancia estática privada que se crea solo una vez.
 
   //Constructor privado
-  MemoriaUsuarioRepositorio._privado();
+  MemoriaUsuarioImpl._privado();
 
   // Factory para acceder a la instancia
   //Metodo para acceder a la instancia única
-  factory MemoriaUsuarioRepositorio() {
+  factory MemoriaUsuarioImpl() {
     return _instancia;
   }
 
   // Lista que simula los usuarios cargados en memoria
-  final List<Usuario> _usuarios = [];
+  final List<Usuario> _usuarios = [
+    Usuario(idUsuario: 3, nombre: "chimi", apellido: "changas", rol: null)
+  ];
 
   @override
   Future<List<Usuario>> obtenerTodosLosUsuarios() async {
@@ -35,7 +36,6 @@ class MemoriaUsuarioRepositorio implements RepoUsuario {
   Future<void> crearUsuario(Usuario usuario) async {
     usuario.idUsuario = _usuarios.length + 1;
     _usuarios.add(usuario);
-    print(usuario.nombre);
   }
 
   @override

@@ -10,10 +10,6 @@ class CrearusuarioCDU {
     if (usuario.nombre.isEmpty || usuario.apellido.isEmpty) {
       throw Exception("El nombre y apellido no pueden estar vacíos.");
     }
-    if (usuario.nombre.isEmpty || usuario.apellido.isEmpty) {
-      throw Exception("El nombre y apellido no pueden estar vacíos.");
-    }
-
     //llamada al repositorio
     await usuarioRepo.crearUsuario(usuario);
   }
