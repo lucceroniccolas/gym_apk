@@ -4,9 +4,10 @@ import 'package:gym_apk/domain/entities/usuario.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 
 class MemoriaUsuarioImpl implements RepoUsuario {
-  static final MemoriaUsuarioImpl _instancia = MemoriaUsuarioImpl._privado();
+  static final MemoriaUsuarioImpl _intanciaUsuario =
+      MemoriaUsuarioImpl._privado();
 
-  ///_instancia es una instancia estática privada que se crea solo una vez.
+  ///_intanciaUsuario es una instancia estática privada que se crea solo una vez.
 
   //Constructor privado
   MemoriaUsuarioImpl._privado();
@@ -14,7 +15,7 @@ class MemoriaUsuarioImpl implements RepoUsuario {
   // Factory para acceder a la instancia
   //Metodo para acceder a la instancia única
   factory MemoriaUsuarioImpl() {
-    return _instancia;
+    return _intanciaUsuario;
   }
 
   // Lista que simula los usuarios cargados en memoria

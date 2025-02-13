@@ -4,9 +4,9 @@ import 'package:gym_apk/domain/entities/rol.dart';
 import 'package:gym_apk/domain/repository/repo_roles.dart';
 
 class MemoriaRolImpl implements RepoRol {
-  static final MemoriaRolImpl _instancia = MemoriaRolImpl._privado();
+  static final MemoriaRolImpl _intanciaRol = MemoriaRolImpl._privado();
 
-  ///_instancia es una instancia estática privada que se crea solo una vez.
+  ///_intanciaRol es una instancia estática privada que se crea solo una vez.
 
   //Constructor privado
   MemoriaRolImpl._privado();
@@ -14,7 +14,7 @@ class MemoriaRolImpl implements RepoRol {
   // Factory para acceder a la instancia
   //Metodo para acceder a la instancia única
   factory MemoriaRolImpl() {
-    return _instancia;
+    return _intanciaRol;
   }
 
 // La lista guarda todos los roles añadidos

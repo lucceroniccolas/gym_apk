@@ -5,13 +5,13 @@ import 'package:gym_apk/domain/entities/permisos.dart';
 
 class MemoriaRolPermisoImpl implements RepoRolPermiso {
   //instancia es una instancia estatica única que se crea una sola vez.
-  static final MemoriaRolPermisoImpl _intancia =
+  static final MemoriaRolPermisoImpl _intanciaRolPermiso =
       MemoriaRolPermisoImpl._privado();
 
   //Constructor privado.
   MemoriaRolPermisoImpl._privado();
   factory MemoriaRolPermisoImpl() {
-    return _intancia;
+    return _intanciaRolPermiso;
   }
 
   final List<RolPermiso> _rolPermiso = [];

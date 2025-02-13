@@ -6,5 +6,5 @@ abstract class RepoClases {
   Future<void> modificarClase(int idClase, Clase claseModificada);
   Future<List<Clase>> obtenerClases();
   Future<Clase?> obtenerClasePorId(int idClase);
-  Future<List<DateTime>> obtenerHorariosPorClase(int idClase);
+  Future<DateTime?> obtenerHorariosPorIdClase(int idClase);
 }

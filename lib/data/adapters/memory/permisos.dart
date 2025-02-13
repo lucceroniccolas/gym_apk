@@ -2,12 +2,13 @@ import 'package:gym_apk/domain/entities/permisos.dart';
 import 'package:gym_apk/domain/repository/repo_permisos.dart';
 
 class MemoriaPermisosImpl implements RepoPermisos {
-  static final MemoriaPermisosImpl _instancia = MemoriaPermisosImpl._privado();
+  static final MemoriaPermisosImpl _intanciaPermiso =
+      MemoriaPermisosImpl._privado();
 
   MemoriaPermisosImpl._privado();
 
   factory MemoriaPermisosImpl() {
-    return (_instancia);
+    return (_intanciaPermiso);
   }
 
   final List<Permiso> _permisos = [];

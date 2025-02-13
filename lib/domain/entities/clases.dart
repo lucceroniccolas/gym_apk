@@ -3,8 +3,8 @@ class Clase {
   String nombreClase;
   String descripcion;
   int cupos;
-  DateTime fecha;
-  int profesorId;
+  DateTime? horario;
+  int idProfesor;
   List<int> inscriptos;
 
   Clase(
@@ -12,7 +12,7 @@ class Clase {
       required this.nombreClase,
       required this.descripcion,
       required this.cupos,
-      required this.fecha,
-      required this.profesorId,
+      required this.horario,
+      required this.idProfesor,
       required this.inscriptos});
 }
