@@ -4,10 +4,16 @@ class EliminarRolCDU {
   final RepoRol repoRol;
   EliminarRolCDU(this.repoRol);
 
-  Future<void> execute(int idRol) async {
+  Future<bool> execute(int idRol) async {
     if (idRol == 0) {
       throw Exception("El ID del rol no es válido");
     }
-    await repoRol.borrarRol(idRol);
+
+    try {
+      await repoRol.borrarRol(idRol);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

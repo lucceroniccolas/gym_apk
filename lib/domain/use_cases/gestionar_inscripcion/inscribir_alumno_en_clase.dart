@@ -4,10 +4,16 @@ class InscribirAlumnoEnClaseCDU {
   final RepoInscripcion _repoInscripcion;
   InscribirAlumnoEnClaseCDU(this._repoInscripcion);
 
-  Future<void> execute(int idUsuario, int idClase) async {
+  Future<bool> execute(int idUsuario, int idClase) async {
     if (idUsuario <= 0 || idClase <= 0) {
-      throw Exception("id de usuario o clase inválidos.");
+      throw Exception("Los IDs deben ser mayor a 0.");
     }
-    await _repoInscripcion.inscribirUsuarioEnClase(idUsuario, idClase);
+
+    try {
+      await _repoInscripcion.inscribirUsuarioEnClase(idUsuario, idClase);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

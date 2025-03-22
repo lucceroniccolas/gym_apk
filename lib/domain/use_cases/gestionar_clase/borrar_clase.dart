@@ -1,13 +1,24 @@
 import 'package:gym_apk/domain/repository/repo_clases.dart';
 
-class EliminarClaseCDU {
+class BorrarClaseCDU {
   final RepoClases repoClases;
-  EliminarClaseCDU(this.repoClases);
+  BorrarClaseCDU(this.repoClases);
 
-  Future<void> execute(int idClase) async {
+  Future<bool> execute(int idClase) async {
     if (idClase == 0) {
       throw Exception("El ID de la clase no es válido");
     }
-    await repoClases.borarClase(idClase);
+
+    final claseExiste = await repoClases.obtenerClasePorId(idClase);
+
+    if (claseExiste == null) {
+      throw Exception("Esta clase no existe");
+    }
+    try {
+      await repoClases.borarClase(idClase);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

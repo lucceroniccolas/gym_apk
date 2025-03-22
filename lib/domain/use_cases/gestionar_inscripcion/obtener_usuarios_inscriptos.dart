@@ -9,6 +9,7 @@ class ObtenerUsuariosInscriptosCDU {
     if (idClase <= 0) {
       throw Exception("Id de clase inválido");
     }
+
     return await _repoInscripcion.obtenerUsuarioInscriptos(idClase);
   }
 }

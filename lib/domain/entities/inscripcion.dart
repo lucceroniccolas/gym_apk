@@ -1,7 +1,7 @@
 class Inscripcion {
   final int idInscripcion;
   final int idUsuario;
-  final int idClase;
+  late final int idClase;
   final DateTime fechaInscripcion;
   Inscripcion(
       {required this.idInscripcion,

@@ -5,11 +5,17 @@ class ModificarRolCDU {
   final RepoRol repoRol;
   ModificarRolCDU(this.repoRol);
 
-  Future<void> call(Rol rolModificado) async {
+  Future<bool> call(Rol rolModificado) async {
     final rolExistente = await repoRol.obtenerRolPorID(rolModificado.idRol);
     if (rolExistente == null) {
       throw Exception("El Rol con id: ${rolModificado.idRol} no existe.");
     }
-    await repoRol.crearRol(rolModificado);
+
+    try {
+      await repoRol.crearRol(rolModificado);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

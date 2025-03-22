@@ -5,10 +5,16 @@ class CrearRolesCDU {
   final RepoRol rolRepo;
   CrearRolesCDU(this.rolRepo);
 
-  Future<void> execute(Rol rol) async {
+  Future<bool> execute(Rol rol) async {
     if (rol.nombreRol.isEmpty) {
       throw Exception("El nombre del rol no puede estar vacío");
     }
-    await rolRepo.crearRol(rol);
+
+    try {
+      await rolRepo.crearRol(rol);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

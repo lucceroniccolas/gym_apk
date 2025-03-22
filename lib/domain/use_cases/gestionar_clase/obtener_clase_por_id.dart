@@ -5,7 +5,7 @@ class ObtenerClasePorIdCDU {
   final RepoClases _repoClases;
 
   ObtenerClasePorIdCDU(this._repoClases);
-  Future<Clase?> call(int idClase) async {
+  Future<Clase?> execute(int idClase) async {
     if (idClase <= 0) {
       throw Exception("El id de la Clase debe ser un valor positivo.");
     }

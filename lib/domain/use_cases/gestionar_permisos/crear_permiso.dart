@@ -5,13 +5,18 @@ class CrearPermisosCDU {
   final RepoPermisos permisoRepo;
   CrearPermisosCDU(this.permisoRepo);
 
-  Future<void> execute(Permiso permiso) async {
+  Future<bool> execute(Permiso permiso) async {
     if (permiso.nombrePermiso.isEmpty) {
       throw Exception("El nombre del permiso no puede estar vacío");
     }
     if (permiso.descripcion.isEmpty) {
       throw Exception("La descripcion del permiso no puede estar vacío");
     }
-    await permisoRepo.crearPermiso(permiso);
+    try {
+      await permisoRepo.crearPermiso(permiso);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

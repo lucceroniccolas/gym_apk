@@ -14,7 +14,16 @@ class MemoriaClasesImpl implements RepoClases {
     return _instanciaClases;
   }
 
-  final List<Clase> _clases = [];
+  final List<Clase> _clases = [
+    Clase(
+        idClase: 1,
+        nombreClase: "cardioExtremo",
+        descripcion: "Se realizaran 4 horas PURAS DE CARDIO",
+        cupos: 10,
+        horario: DateTime.now(),
+        idProfesor: 1,
+        inscriptos: [1])
+  ];
 
   @override
   Future<void> borarClase(int idClase) async {

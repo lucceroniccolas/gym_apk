@@ -4,12 +4,17 @@ class EliminarUsuarioCDU {
   final RepoUsuario usuarioRepo;
   EliminarUsuarioCDU(this.usuarioRepo);
 
-  Future<void> execute(int idUsuario) async {
+  Future<bool> execute(int idUsuario) async {
     if (idUsuario == 0) {
       throw Exception("El ID del usuario no es válido");
     }
 
     //llamada al repositorio
-    await usuarioRepo.borrarUsuario(idUsuario);
+    try {
+      await usuarioRepo.borrarUsuario(idUsuario);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

@@ -5,7 +5,7 @@ class ObtenerTodasLasClasesCDU {
   final RepoClases repoClase;
   ObtenerTodasLasClasesCDU(this.repoClase);
 
-  Future<List<Clase>> call() async {
+  Future<List<Clase>> execute() async {
     return await repoClase.obtenerClases();
   }
 }

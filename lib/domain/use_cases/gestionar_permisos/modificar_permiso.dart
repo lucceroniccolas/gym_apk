@@ -5,13 +5,18 @@ class ModificarPermisoCDU {
   final RepoPermisos repoPermiso;
   ModificarPermisoCDU(this.repoPermiso);
 
-  Future<void> execute(Permiso permisoModificado) async {
+  Future<bool> execute(Permiso permisoModificado) async {
     final permisoExistente =
         await repoPermiso.obtenerPermisoPorId(permisoModificado.idPermiso);
     if (permisoExistente == null) {
       throw Exception(
           "El Permiso con id: ${permisoModificado.idPermiso} no existe.");
     }
-    return await repoPermiso.crearPermiso(permisoModificado);
+    try {
+      await repoPermiso.crearPermiso(permisoModificado);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

@@ -18,7 +18,10 @@ class MemoriaRolImpl implements RepoRol {
   }
 
 // La lista guarda todos los roles añadidos
-  final List<Rol> _roles = [];
+  final List<Rol> _roles = [
+    Rol(idRol: 1, nombreRol: "Profesor"),
+    Rol(idRol: 2, nombreRol: "Alumno")
+  ];
 
 //DELETE ROL
   @override

@@ -1,5 +1,5 @@
-import 'package:gym_apk/domain/entities/clases.dart';
 import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
+import 'package:gym_apk/domain/entities/clases.dart';
 
 class ObtenerClasesInscriptasCDU {
   final RepoInscripcion _repoInscripcion;
@@ -9,6 +9,7 @@ class ObtenerClasesInscriptasCDU {
     if (idUsuario <= 0) {
       throw Exception("Id  de usuario inválido.");
     }
+
     return await _repoInscripcion.obtenerClasesInscriptas(idUsuario);
   }
 }

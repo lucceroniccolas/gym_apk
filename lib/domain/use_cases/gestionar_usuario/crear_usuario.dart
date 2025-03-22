@@ -5,12 +5,17 @@ class CrearusuarioCDU {
   final RepoUsuario usuarioRepo;
   CrearusuarioCDU(this.usuarioRepo);
 
-  Future<void> execute(Usuario usuario) async {
+  Future<bool> execute(Usuario usuario) async {
     //validaciones
     if (usuario.nombre.isEmpty || usuario.apellido.isEmpty) {
       throw Exception("El nombre y apellido no pueden estar vacíos.");
     }
     //llamada al repositorio
-    await usuarioRepo.crearUsuario(usuario);
+    try {
+      await usuarioRepo.crearUsuario(usuario);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
