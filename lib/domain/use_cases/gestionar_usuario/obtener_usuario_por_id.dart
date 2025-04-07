@@ -5,7 +5,7 @@ class ObtenerUsuarioPorIdCDU {
   final RepoUsuario _repoUsuario;
 
   ObtenerUsuarioPorIdCDU(this._repoUsuario);
-  Future<Usuario?> call(int idUsuario) async {
+  Future<Usuario?> execute(int idUsuario) async {
     if (idUsuario <= 0) {
       throw Exception("El id del usuario debe ser un valor positivo.");
     }

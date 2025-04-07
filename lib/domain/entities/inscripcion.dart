@@ -8,4 +8,16 @@ class Inscripcion {
       required this.idUsuario,
       required this.fechaInscripcion,
       required this.idClase});
+
+  Inscripcion copyWith({
+    int? idUsuario,
+    int? idClase,
+    DateTime? fechaInscripcion,
+  }) {
+    return Inscripcion(
+        idInscripcion: idInscripcion,
+        idUsuario: idUsuario ?? this.idUsuario,
+        fechaInscripcion: fechaInscripcion ?? this.fechaInscripcion,
+        idClase: idClase ?? this.idClase);
+  }
 }

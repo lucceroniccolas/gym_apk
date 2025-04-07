@@ -24,14 +24,18 @@ class MemoriaPermisosImpl implements RepoPermisos {
   }
 
   @override
-  Future<void> modificarPermiso(Permiso permisoModificado) async {
+  Future<void> modificarPermiso(
+      int idPermiso, Permiso permisoModificado) async {
+    if (permisoModificado.idPermiso <= 0) {
+      throw Exception("id de permiso no válido");
+    }
     final index = _permisos.indexWhere(
         (permiso) => permiso.idPermiso == permisoModificado.idPermiso);
-    if (index != -1) {
-      _permisos[index] = permisoModificado;
-    } else {
+    if (index == -1) {
       throw Exception(
-          "Usuario con id ${permisoModificado.idPermiso} no encontrado");
+          "Permiso con id ${permisoModificado.idPermiso} no encontrado");
+    } else {
+      _permisos[index] = permisoModificado;
     }
   }
 

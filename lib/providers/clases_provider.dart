@@ -15,7 +15,7 @@ class ClasesProvider extends ChangeNotifier {
   final ModificarClaseCDU _modificarClase;
   final ObtenerClasePorIdCDU _obtenerClasePorId;
   final ObtenerTodasLasClasesCDU _obtenerTodasLasClases;
-  final ObtenerHorarioPorIdDeClaseCDU _obtenerHorarioPorIdDeClaseCDU;
+  final ObtenerHorarioPorIdDeClaseCDU _obtenerHorarioPorIdDeClase;
 
   ClasesProvider(
       //Constructor del Provider
@@ -23,18 +23,32 @@ class ClasesProvider extends ChangeNotifier {
       this._eliminarClase, //dependecias
       this._modificarClase,
       this._obtenerClasePorId,
-      this._obtenerHorarioPorIdDeClaseCDU,
+      this._obtenerHorarioPorIdDeClase,
       this._obtenerTodasLasClases);
 
-  List<Clase> _clases = [];
-  Clase? _claseSeleccionada;
-  Clase? get claseSeleccionada =>
-      _claseSeleccionada; //Esto permite acceder a _clases sin exponer la variable privada directamente.
-  DateTime? _horarioClase;
-  DateTime? get horarioClase => _horarioClase;
-  List<Clase> get clases => _clases;
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  List<Clase> _clases =
+      []; // lista privada que almacena todas las clases disponibles en el sistema.
+
+  List<Clase> get clases =>
+      _clases; // Getter público para obtener la lista de clases desde la UI (Esto permite acceder a _clases sin exponer la variable privada directamente.)
+
+  Clase?
+      _claseSeleccionada; //Guarda una clase específica seleccionada por el usuario.
+
+  Clase?
+      get claseSeleccionada => //Getter público para acceder a la clase seleccionada desde la UI.
+          _claseSeleccionada;
+
+  DateTime? _horarioClase; //Guarda el horario de la clase seleccionada.
+
+  DateTime? get horarioClase =>
+      _horarioClase; //Getter público para obtener el horario de la clase seleccionada.
+
+  bool _isLoading =
+      false; //Indica si una operación está en curso (como cargar clases o modificar datos).
+
+  bool get isLoading =>
+      _isLoading; //Getter público para saber si el Provider está realizando una operación.
 
   Future<bool> crearClase(Clase nuevaClase) async {
     _isLoading = true;
@@ -49,6 +63,8 @@ class ClasesProvider extends ChangeNotifier {
   }
 
   Future<bool> eliminarClase(int idClase) async {
+    _isLoading = true;
+    notifyListeners();
     bool resultado = await _eliminarClase.execute(idClase);
     if (resultado) {
       _clases.removeWhere((c) => c.idClase == idClase);
@@ -59,16 +75,23 @@ class ClasesProvider extends ChangeNotifier {
   }
 
   Future<bool> modificarClase(int idClase, Clase claseModificada) async {
-    bool resultado = await _modificarClase.execute(idClase, claseModificada);
-    if (resultado) {
-      int index = _clases.indexWhere((c) => c.idClase == idClase);
-      if (index != -1) {
-        _clases[index] = claseModificada;
+    try {
+      _isLoading = true;
+      notifyListeners();
+      bool resultado = await _modificarClase.execute(idClase, claseModificada);
+
+      if (resultado) {
+        _clases = await _obtenerTodasLasClases.execute(); //recargamos los datos
+        notifyListeners();
       }
+      return resultado;
+    } catch (e) {
+      print("Error al moidificar clase: $e");
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
-    return resultado;
   }
 
   Future<void> obtenerClases() async {
@@ -78,9 +101,10 @@ class ClasesProvider extends ChangeNotifier {
       _clases = await _obtenerTodasLasClases.execute();
     } catch (e) {
       _clases = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> obtenerClasePorId(idClase) async {
@@ -90,20 +114,22 @@ class ClasesProvider extends ChangeNotifier {
       _claseSeleccionada = await _obtenerClasePorId.execute(idClase);
     } catch (e) {
       _claseSeleccionada = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> obtenerHorarioPorIdDeClase(int idClase) async {
     _isLoading = true;
     notifyListeners();
     try {
-      _horarioClase = await _obtenerHorarioPorIdDeClaseCDU.execute(idClase);
+      _horarioClase = await _obtenerHorarioPorIdDeClase.execute(idClase);
     } catch (e) {
       _horarioClase = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
   }
 }

@@ -9,7 +9,11 @@ Future<void> main() async {
 //CREANDO USUARIO
 
   repositorioUsuario.crearUsuario(Usuario(
-      idUsuario: 1, nombre: "Diegoloso", apellido: "rodriguez", rol: null));
+      idUsuario: 1,
+      nombre: "Diegoloso",
+      apellido: "rodriguez",
+      rol: null,
+      correo: 'nicoolashddgg@gmial.cosm'));
   print("creado con exito");
 
 //TODOS LOS USUARIOS

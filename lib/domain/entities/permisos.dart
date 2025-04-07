@@ -1,10 +1,17 @@
 class Permiso {
   final int idPermiso;
-  final String descripcion;
-  final String nombrePermiso;
+  String descripcion;
+  String nombrePermiso;
 
   Permiso(
       {required this.idPermiso,
       required this.descripcion,
       required this.nombrePermiso});
+
+  Permiso copyWith({String? descripcion, String? nombrePermiso}) {
+    return Permiso(
+        idPermiso: idPermiso,
+        descripcion: descripcion ?? this.descripcion,
+        nombrePermiso: nombrePermiso ?? this.nombrePermiso);
+  }
 }

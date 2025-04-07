@@ -1,8 +1,8 @@
 import 'package:gym_apk/domain/repository/repo_permisos.dart';
 
-class EliminarPermisoCDU {
+class BorrarPermisoCDU {
   final RepoPermisos repoPermiso;
-  EliminarPermisoCDU(this.repoPermiso);
+  BorrarPermisoCDU(this.repoPermiso);
 
   Future<bool> execute(int idPermiso) async {
     if (idPermiso <= 0) {

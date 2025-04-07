@@ -5,15 +5,20 @@ class ModificarUsuarioCDU {
   final RepoUsuario _usuarioRepo;
   ModificarUsuarioCDU(this._usuarioRepo);
 
-  Future<bool> call(Usuario usuarioModificado) async {
-    final usuarioExistente =
-        await _usuarioRepo.obtenerUsuarioPorId(usuarioModificado.idUsuario);
-    if (usuarioExistente == null) {
-      throw Exception(
-          "El usuario con id ${usuarioModificado.idUsuario} no existe");
+  Future<bool> execute(int idUsuario, Usuario usuarioModificado) async {
+    if (idUsuario <= 0) {
+      throw Exception("El usuario con id ${idUsuario} no es válido");
     }
+
+    final usuarioExiste = await _usuarioRepo.obtenerUsuarioPorId(idUsuario);
+    if (usuarioExiste == null) {
+      throw Exception("El usuario no existe");
+    }
+
     try {
-      await _usuarioRepo.crearUsuario(usuarioModificado);
+      usuarioModificado.idUsuario =
+          idUsuario; //aseguramos que mantiene el mismo ID
+      await _usuarioRepo.modificarUsuario(idUsuario, usuarioModificado);
       return true;
     } catch (e) {
       return false;

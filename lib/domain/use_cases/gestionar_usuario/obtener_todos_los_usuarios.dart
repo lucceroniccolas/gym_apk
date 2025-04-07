@@ -5,7 +5,7 @@ class ObtenerTodosLosUsuariosCDU {
   final RepoUsuario _repoUsuario;
   ObtenerTodosLosUsuariosCDU(this._repoUsuario);
 
-  Future<List<Usuario>> call() async {
+  Future<List<Usuario>> execute() async {
     return await _repoUsuario.obtenerTodosLosUsuarios();
   }
 }
