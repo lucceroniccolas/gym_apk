@@ -29,12 +29,20 @@ class UsuarioProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  Future<void> cargarUsuarios() async {
+    _isLoading = true;
+    notifyListeners();
+    _usuarios = await _obtenerTodosLosUsuarios.execute();
+    _isLoading = false;
+    notifyListeners();
+  }
+
   Future<bool> crearUsuario(Usuario nuevoUsuario) async {
     _isLoading = true;
     notifyListeners();
     bool resultado = await _crearusuario.execute(nuevoUsuario);
     if (resultado) {
-      _usuarios.add(nuevoUsuario);
+      await cargarUsuarios();
     }
     _isLoading = false;
     notifyListeners();
@@ -46,23 +54,20 @@ class UsuarioProvider extends ChangeNotifier {
     notifyListeners();
     bool resultado = await _eliminarUsuario.execute(idUsuario);
     if (resultado) {
-      _usuarios.removeWhere((u) => u.idUsuario == idUsuario);
+      await cargarUsuarios();
     }
     _isLoading = false;
     notifyListeners();
     return resultado;
   }
 
-  Future<bool> modificarUsuario(
-      int idUsuario, Usuario usuarioModificado) async {
+  Future<bool> modificarUsuario(Usuario usuarioModificado) async {
     try {
       _isLoading = true;
       notifyListeners();
-      bool resultado =
-          await _modificarUsuario.execute(idUsuario, usuarioModificado);
+      bool resultado = await _modificarUsuario.execute(usuarioModificado);
       if (resultado) {
         _usuarios = await _obtenerTodosLosUsuarios.execute();
-        notifyListeners(); // Notificamos cambios a la UI
       }
       return resultado;
     } catch (e) {
@@ -72,14 +77,6 @@ class UsuarioProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners(); // Notificar que la operación ha terminado
     }
-  }
-
-  Future<void> cargarUsuarios() async {
-    _isLoading = true;
-    notifyListeners();
-    _usuarios = await _obtenerTodosLosUsuarios.execute();
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> buscarUsuarioPorID(int idUsuario) async {

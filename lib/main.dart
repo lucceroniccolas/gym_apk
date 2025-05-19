@@ -1,61 +1,36 @@
-import 'package:gym_apk/data/adapters/memory/usuarios.dart';
-import 'package:gym_apk/domain/entities/usuario.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/clases_provider.dart';
+import 'ui/homePage.dart';
 
-Future<void> main() async {
-  final repositorioUsuario = MemoriaUsuarioImpl();
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (_) => ClasesProvider(
+                _crearClase,
+                _eliminarClase,
+                _modificarClase,
+                _obtenerClasePorId,
+                _obtenerHorarioPorIdDeClase,
+                _obtenerTodasLasClases)),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
 
-//CREANDO ROLES
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-//CREANDO USUARIO
-
-  repositorioUsuario.crearUsuario(Usuario(
-      idUsuario: 1,
-      nombre: "Diegoloso",
-      apellido: "rodriguez",
-      rol: null,
-      correo: 'nicoolashddgg@gmial.cosm'));
-  print("creado con exito");
-
-//TODOS LOS USUARIOS
-
-  List<Usuario> todosLosUsuarios =
-      await repositorioUsuario.obtenerTodosLosUsuarios();
-
-//FUNCION PARA MOSTRAR TODOS LOS USUARIOS
-
-  todosLosUsuarios.forEach((user) {
-    print(
-        "ID: ${user.idUsuario}, Nombre: ${user.nombre}, Apellido: ${user.apellido}, Rol: ${user.rol}");
-  });
-
-//SIMULACION DE USUARIO A ENCONTRAR
-
-  var usuarioAEncontrar = await repositorioUsuario.obtenerUsuarioPorId(2);
-
-  if (usuarioAEncontrar != null) {
-    print(
-        "El nombre del usuario es ${usuarioAEncontrar.nombre} y el apellido es: ${usuarioAEncontrar.apellido}");
-  } else {
-    print("Usuario no encontrado.");
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "Gestión Gimnasio",
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const Homepage(),
+      debugShowCheckedModeBanner: false,
+    );
   }
-// BORRANDO USUARIO
-  try {
-    await repositorioUsuario.borrarUsuario(3);
-    print("Usuario borrado con éxito");
-  } catch (e) {
-    "El usuario no se encontró";
-  }
-
-// VOLVIENDO A MOSTRAR USUARIO
-  todosLosUsuarios.forEach((user) {
-    print(
-        "ID: ${user.idUsuario}, Nombre: ${user.nombre}, Apellido: ${user.apellido}, Rol: ${user.rol}");
-  });
-  // try {
-  //    await modificarUsuario(
-  //        Usuario(idUsuario: 3, nombre: "Juan", apellido: "Lucero", rol: null));
-  //    print("Usuario Modificado ");
-  //  } catch (e) {
-  //    print("Error: el diablo");
-  //  }
 }

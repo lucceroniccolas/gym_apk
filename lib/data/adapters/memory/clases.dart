@@ -17,9 +17,9 @@ class MemoriaClasesImpl implements RepoClases {
   final List<Clase> _clases = [
     Clase(
         idClase: 1,
-        nombreClase: "cardioExtremo",
-        descripcion: "Se realizaran 4 horas PURAS DE CARDIO",
-        cupos: 10,
+        nombreClase: "CrossFit Avanzado",
+        descripcion: "Clase de crossfit 2hrs",
+        // cupos: 10,
         horario: DateTime.now(),
         idProfesor: 1,
         inscriptos: [1])
@@ -40,12 +40,22 @@ class MemoriaClasesImpl implements RepoClases {
     if (claseModificada.idClase <= 0) {
       throw Exception("Id de clase no válida");
     }
-    final index =
-        _clases.indexWhere((clase) => clase.idClase == claseModificada.idClase);
+    final index = _clases.indexWhere((clase) => clase.idClase == idClase);
     if (index == -1) {
       throw Exception("Clase con id ${claseModificada.idClase} no encontrada ");
     }
-    _clases[index] = claseModificada;
+    if (claseModificada.idClase != idClase) {
+      throw Exception(
+          "¿Que hacemos trollins?, No se puede modificar el ID de la clase.");
+    }
+    final claseAnterior = _clases[index];
+    _clases[index] = claseAnterior.copyWith(
+      nombreClase: claseModificada.nombreClase,
+      descripcion: claseModificada.descripcion ?? claseAnterior.descripcion,
+      horario: claseModificada.horario ?? claseAnterior.horario,
+      idProfesor: claseModificada.idProfesor ?? claseAnterior.idProfesor,
+      inscriptos: claseModificada.inscriptos ?? claseAnterior.inscriptos,
+    );
   }
 
   @override

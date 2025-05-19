@@ -5,7 +5,7 @@ class ObtenerTodosLosRolesCDU {
   final RepoRol repoRol;
   ObtenerTodosLosRolesCDU(this.repoRol);
 
-  Future<List<Rol>> call() async {
+  Future<List<Rol>> execute() async {
     return await repoRol.obtenerTodosLosRoles();
   }
 }

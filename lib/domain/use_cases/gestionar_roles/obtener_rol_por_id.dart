@@ -5,7 +5,7 @@ class ObtenerRolPorIdCDU {
   final RepoRol _repoRol;
 
   ObtenerRolPorIdCDU(this._repoRol);
-  Future<Rol?> call(int idRol) async {
+  Future<Rol?> execute(int idRol) async {
     if (idRol <= 0) {
       throw Exception("El id del Rol debe ser un valor positivo.");
     }

@@ -5,9 +5,10 @@ class ModificarUsuarioCDU {
   final RepoUsuario _usuarioRepo;
   ModificarUsuarioCDU(this._usuarioRepo);
 
-  Future<bool> execute(int idUsuario, Usuario usuarioModificado) async {
+  Future<bool> execute(Usuario usuarioModificado) async {
+    final idUsuario = usuarioModificado.idUsuario;
     if (idUsuario <= 0) {
-      throw Exception("El usuario con id ${idUsuario} no es válido");
+      throw Exception("El usuario con id $idUsuario no es válido");
     }
 
     final usuarioExiste = await _usuarioRepo.obtenerUsuarioPorId(idUsuario);
@@ -16,8 +17,6 @@ class ModificarUsuarioCDU {
     }
 
     try {
-      usuarioModificado.idUsuario =
-          idUsuario; //aseguramos que mantiene el mismo ID
       await _usuarioRepo.modificarUsuario(idUsuario, usuarioModificado);
       return true;
     } catch (e) {

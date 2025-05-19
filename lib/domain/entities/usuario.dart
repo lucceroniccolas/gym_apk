@@ -6,23 +6,28 @@ class Usuario {
   String apellido;
   String? correo;
   Rol? rol;
+  bool pago;
   Usuario(
       {required this.idUsuario,
       required this.nombre,
       required this.correo,
       required this.apellido,
-      required this.rol});
+      required this.rol,
+      required this.pago});
   Usuario copyWith({
     String? nombre,
     String? apellido,
     String? correo,
     Rol? rol,
+    bool? pago,
   }) {
     return Usuario(
-        idUsuario: idUsuario,
-        nombre: nombre ?? this.nombre,
-        apellido: apellido ?? this.apellido,
-        rol: rol ?? this.rol,
-        correo: correo ?? this.correo);
+      idUsuario: idUsuario,
+      nombre: nombre ?? this.nombre,
+      apellido: apellido ?? this.apellido,
+      rol: rol ?? this.rol,
+      correo: correo ?? this.correo,
+      pago: pago ?? this.pago,
+    );
   }
 }

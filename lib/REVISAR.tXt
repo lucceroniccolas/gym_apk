@@ -1,0 +1,10 @@
+ /// REVISAR
+{
+    -Archivo : Entidades/clases.dart  
+    List<int> inscriptos; ¿ES UNA LISTA DE ENTEROS O LISTA DE ALUMNOS?.
+}
+
+
+{
+    -Relaciones entre Inscripciones (metodo: inscribirAlumnoAUnaClase) debe restar un cupo de la entidad clases
+}

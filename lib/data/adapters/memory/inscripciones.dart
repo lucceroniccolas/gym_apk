@@ -3,24 +3,17 @@ import 'package:gym_apk/domain/entities/clases.dart';
 import 'package:gym_apk/domain/entities/usuario.dart';
 import 'package:gym_apk/domain/repository/repo_clases.dart';
 import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
-import 'package:gym_apk/data/adapters/memory/clases.dart';
-import 'package:gym_apk/data/adapters/memory/usuarios.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 
 class MemoriaInscripcionesImpl implements RepoInscripcion {
-  static final MemoriaInscripcionesImpl _instanciaInscripciones =
-      MemoriaInscripcionesImpl._privado();
+  final RepoClases _repoClases;
+  final RepoUsuario _repoUsuario;
 
-  MemoriaInscripcionesImpl._privado();
-
-  factory MemoriaInscripcionesImpl() {
-    return _instanciaInscripciones;
-  }
-
+  MemoriaInscripcionesImpl(this._repoClases, this._repoUsuario);
+  // inyectando los repos desde el contructor
+  //podemos registrarlo con get_it y tener control total sobre las dependecias
   final List<Inscripcion> _inscripciones = [];
   int _contadorId = 1;
-  final RepoClases _repoClases = MemoriaClasesImpl();
-  final RepoUsuario _repoUsuario = MemoriaUsuarioImpl();
 
   @override
   Future<void> cancelarInscripcion(int idUsuario, int idClase) async {

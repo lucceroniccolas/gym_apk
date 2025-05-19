@@ -4,28 +4,17 @@ import 'package:gym_apk/domain/entities/usuario.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 
 class MemoriaUsuarioImpl implements RepoUsuario {
-  static final MemoriaUsuarioImpl _intanciaUsuario =
-      MemoriaUsuarioImpl._privado();
+  MemoriaUsuarioImpl();
 
-  ///_intanciaUsuario es una instancia estática privada que se crea solo una vez.
-
-  //Constructor privado
-  MemoriaUsuarioImpl._privado();
-
-  // Factory para acceder a la instancia
-  //Metodo para acceder a la instancia única
-  factory MemoriaUsuarioImpl() {
-    return _intanciaUsuario;
-  }
-
-  // Lista que simula los usuarios cargados en memoria
+  // Lista que guarda los usuarios cargados en memoria
   final List<Usuario> _usuarios = [
     Usuario(
         idUsuario: 3,
         nombre: "chimi",
         apellido: "changas",
         correo: "nicolashdgg@gmail.com",
-        rol: null)
+        rol: null,
+        pago: true)
   ];
 
   @override

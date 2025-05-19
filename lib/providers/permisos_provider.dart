@@ -73,7 +73,7 @@ class PermisosProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> ObtenerPermisos() async {
+  Future<void> obtenerPermisos() async {
     _isLoading = true;
     notifyListeners();
     try {

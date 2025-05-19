@@ -1,9 +1,11 @@
 import 'package:gym_apk/domain/repository/repo_clases.dart';
 
 class BorrarClaseCDU {
+//Inyeccion de dependecia Manual
   final RepoClases repoClases;
-  BorrarClaseCDU(this.repoClases);
-
+  BorrarClaseCDU(
+      this.repoClases); //Permite que la clase no dependa de la implementacion DESACOPLA
+//Inyeccion de dependecia Manual
   Future<bool> execute(int idClase) async {
     if (idClase == 0) {
       throw Exception("El ID de la clase no es válido");
