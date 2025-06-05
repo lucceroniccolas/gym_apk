@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gym_apk/ui/clases/widgets/formulario_obtener_clase_por_id.dart';
 import 'package:provider/provider.dart';
 import '../../providers/clases_provider.dart';
-import 'package:gym_apk/domain/entities/clases.dart';
+
 import 'widgets/formulario_crear_clase.dart';
+import 'widgets/formulario_modificar_clase.dart';
+import 'widgets/formulario_eliminar_clase.dart';
 
 class ClasesView extends StatelessWidget {
   const ClasesView({super.key});
@@ -10,6 +13,8 @@ class ClasesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final clasesProvider = Provider.of<ClasesProvider>(context);
+    final claseSeleccionada = clasesProvider.claseSeleccionada;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Gestion de Clases"),
@@ -25,15 +30,22 @@ class ClasesView extends StatelessWidget {
                       final clase = clasesProvider.clases[index];
                       return ListTile(
                         title: Text(clase.nombreClase),
-                        subtitle: Text("ID: ${clase.idClase}"),
+                        subtitle: Text(clase.descripcion ?? "Sin descripcion"),
+                        trailing: Text(
+                          clase.horario?.toString() ?? "Sin horario",
+                        ),
+                        selected: claseSeleccionada?.idClase == clase.idClase,
+                        onTap: () {
+                          clasesProvider.claseSeleccionada = clase;
+                        },
                       );
                     },
                   ),
                 ),
                 const Divider(),
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 12,
+                  runSpacing: 12,
                   alignment: WrapAlignment.center,
                   children: [
                     ElevatedButton(
@@ -43,15 +55,34 @@ class ClasesView extends StatelessWidget {
                       child: const Text("Crear Clase"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: claseSeleccionada == null
+                          ? null
+                          : () => mostrarDialogoEliminarClase(
+                              context, claseSeleccionada.idClase),
                       child: const Text("Eliminar Clase"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: claseSeleccionada == null
+                          ? null
+                          : () => mostrarFormularioModificarClase(
+                              context, claseSeleccionada),
                       child: const Text("Modificar Clase"),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (claseSeleccionada != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Clase seleccionada: ${claseSeleccionada.nombreClase}"),
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text("Clase seleccionada"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => mostarDialogoObtenerClasePorId(context),
                       child: const Text("Buscar clase por ID"),
                     ),
                   ],

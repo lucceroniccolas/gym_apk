@@ -3,12 +3,13 @@ import 'package:gym_apk/domain/entities/clases.dart';
 import 'package:gym_apk/providers/clases_provider.dart';
 import 'package:provider/provider.dart';
 
-void mostrarFormularioCrearClase(BuildContext context) {
-  final _nombreController = TextEditingController();
-  DateTime? _fechaSeleccionada;
-  final _descripcionController = TextEditingController();
-  final _cuposController = TextEditingController();
-  final _idProfesorController = TextEditingController();
+void mostrarFormularioModificarClase(BuildContext context, Clase clase) {
+  final _nombreController = TextEditingController(text: clase.nombreClase);
+  DateTime? _fechaSeleccionada = clase.horario;
+  final _descripcionController = TextEditingController(text: clase.descripcion);
+  final _idProfesorController =
+      TextEditingController(text: clase.idProfesor?.toString());
+  final _cuposController = TextEditingController(text: clase.cupos?.toString());
 
   showDialog(
     context: context,
@@ -16,7 +17,7 @@ void mostrarFormularioCrearClase(BuildContext context) {
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Crear Clase'),
+            title: const Text('Modificar Clase'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -26,14 +27,13 @@ void mostrarFormularioCrearClase(BuildContext context) {
                       const InputDecoration(labelText: 'Nombre de la clase'),
                 ),
                 TextField(
-                  controller: _descripcionController,
-                  decoration: const InputDecoration(
-                      labelText: "Descripcion de la clase"),
+                  controller: _cuposController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: "Cupos"),
                 ),
                 TextField(
-                  controller: _cuposController,
-                  decoration: const InputDecoration(labelText: "Cupos"),
-                  keyboardType: TextInputType.number,
+                  controller: _descripcionController,
+                  decoration: const InputDecoration(labelText: "Descripción"),
                 ),
                 TextField(
                   controller: _idProfesorController,
@@ -46,7 +46,7 @@ void mostrarFormularioCrearClase(BuildContext context) {
                   onPressed: () async {
                     final fecha = await showDatePicker(
                       context: context,
-                      initialDate: DateTime.now(),
+                      initialDate: _fechaSeleccionada ?? DateTime.now(),
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2030),
                     );
@@ -77,28 +77,27 @@ void mostrarFormularioCrearClase(BuildContext context) {
 
                   final nombre = _nombreController.text.trim();
                   final descripcion = _descripcionController.text.trim();
-                  final cupos = int.tryParse(_cuposController.text);
                   final idProfesor = int.tryParse(_idProfesorController.text);
+                  final cupos = int.tryParse(_cuposController.text.trim());
 
                   if (nombre.isNotEmpty &&
-                      _fechaSeleccionada != null &&
                       descripcion.isNotEmpty &&
-                      cupos != null &&
-                      idProfesor != null) {
-                    final nuevaClase = Clase(
-                      idClase: 0,
-                      nombreClase: nombre,
-                      cupos: cupos,
-                      horario: _fechaSeleccionada!,
-                      descripcion: descripcion,
-                      idProfesor: idProfesor,
-                      inscriptos: [],
-                    );
-                    await provider.crearClase(nuevaClase);
+                      _fechaSeleccionada != null &&
+                      idProfesor != null &&
+                      cupos != null) {
+                    final claseModificada = clase.copyWith(
+                        nombreClase: nombre,
+                        descripcion: descripcion,
+                        horario: _fechaSeleccionada,
+                        idProfesor: idProfesor,
+                        cupos: cupos);
+
+                    await provider.modificarClase(
+                        clase.idClase, claseModificada);
                     Navigator.pop(context);
                   }
                 },
-                child: const Text('Guardar'),
+                child: const Text('Guardar Cambios'),
               ),
             ],
           );

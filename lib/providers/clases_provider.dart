@@ -36,13 +36,25 @@ class ClasesProvider extends ChangeNotifier {
       _claseSeleccionada; //Guarda una clase específica seleccionada por el usuario.
 
   Clase?
-      get claseSeleccionada => //Getter público para acceder a la clase seleccionada desde la UI.
+      get claseSeleccionada => //Getter público para acceder a la clase seleccionada desde la UI. ej: provider.horarioClase
           _claseSeleccionada;
+
+  set claseSeleccionada(Clase? clase) {
+    _claseSeleccionada =
+        clase; //Setter publico permite acceder a la modificacion de una variable privada
+    notifyListeners(); //ejemplo de uso en UI clase_pantalla.dart
+  }
 
   DateTime? _horarioClase; //Guarda el horario de la clase seleccionada.
 
   DateTime? get horarioClase =>
       _horarioClase; //Getter público para obtener el horario de la clase seleccionada.
+
+  set horarioClase(DateTime? nuevoHorario) {
+    _horarioClase =
+        nuevoHorario; //setter publico para poder modificar los horarios de clase
+    notifyListeners();
+  }
 
   bool _isLoading =
       false; //Indica si una operación está en curso (como cargar clases o modificar datos).
@@ -54,24 +66,32 @@ class ClasesProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     bool resultado = await _crearClase.execute(nuevaClase);
-    if (resultado) {
-      _clases.add(nuevaClase);
-    }
     _isLoading = false;
     notifyListeners();
     return resultado;
   }
 
   Future<bool> eliminarClase(int idClase) async {
-    _isLoading = true;
-    notifyListeners();
-    bool resultado = await _eliminarClase.execute(idClase);
-    if (resultado) {
-      _clases.removeWhere((c) => c.idClase == idClase);
+    try {
+      print(claseSeleccionada?.idClase);
+      _isLoading = true;
+      notifyListeners();
+      final resultado = await _eliminarClase.execute(idClase);
+      if (resultado) {
+        _clases = await _obtenerTodasLasClases.execute();
+        if (_claseSeleccionada?.idClase == idClase) {
+          _claseSeleccionada = null;
+        }
+        notifyListeners();
+      }
+      return resultado;
+    } catch (e) {
+      print("Error al eliminar clase $e");
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
-    return resultado;
   }
 
   Future<bool> modificarClase(int idClase, Clase claseModificada) async {
@@ -82,8 +102,11 @@ class ClasesProvider extends ChangeNotifier {
 
       if (resultado) {
         _clases = await _obtenerTodasLasClases.execute(); //recargamos los datos
-        notifyListeners();
       }
+      if (_claseSeleccionada?.idClase == idClase) {
+        _claseSeleccionada = _clases.firstWhere((c) => c.idClase == idClase);
+      }
+      notifyListeners();
       return resultado;
     } catch (e) {
       print("Error al moidificar clase: $e");
@@ -101,6 +124,7 @@ class ClasesProvider extends ChangeNotifier {
       _clases = await _obtenerTodasLasClases.execute();
     } catch (e) {
       _clases = [];
+      print("error al inicializar clases: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

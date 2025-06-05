@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'clases/clasePantalla.dart';
+import 'clases/clase_pantalla.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -23,7 +23,7 @@ class Homepage extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const ClasesView()),
                 );
               },
-            )
+            ),
           ],
         ),
       ),

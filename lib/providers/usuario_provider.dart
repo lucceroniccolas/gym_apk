@@ -26,6 +26,11 @@ class UsuarioProvider extends ChangeNotifier {
   Usuario? _usuarioSeleccionado;
   Usuario? get usuarioSeleccionado => _usuarioSeleccionado;
 
+  set usuarioSeleccionado(Usuario? usuario) {
+    _usuarioSeleccionado = usuario;
+    notifyListeners(); //permitimos acceso a modificacion de variable
+  }
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 

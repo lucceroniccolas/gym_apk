@@ -2,11 +2,11 @@ import 'package:gym_apk/domain/entities/permisos.dart';
 import 'package:gym_apk/domain/entities/rol.dart';
 
 class RolPermiso {
-  final Rol rol;
-  final Permiso permiso;
+  final Rol idrol;
+  final Permiso idpermiso;
 
   RolPermiso({
-    required this.rol,
-    required this.permiso,
+    required this.idrol,
+    required this.idpermiso,
   });
 }

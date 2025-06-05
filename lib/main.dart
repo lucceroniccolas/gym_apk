@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/clases_provider.dart';
+import 'injection/injection_container.dart';
 import 'ui/homePage.dart';
+import 'providers/clases_provider.dart';
+import 'providers/usuario_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); //me ayuda a asegurar que flutter esté listo
+  await init(); //preparamos e inyectamos todas las dependecias necesarias antes que arranque la apk
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (_) => ClasesProvider(
-                _crearClase,
-                _eliminarClase,
-                _modificarClase,
-                _obtenerClasePorId,
-                _obtenerHorarioPorIdDeClase,
-                _obtenerTodasLasClases)),
-      ],
-      child: const MyApp(),
-    ),
+    const MyApp(),
   );
 }
 
@@ -26,11 +19,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Gestión Gimnasio",
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const Homepage(),
-      debugShowCheckedModeBanner: false,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) {
+          final providerClases = getIt<ClasesProvider>();
+          providerClases.obtenerClases();
+          return providerClases;
+        }),
+      ],
+      child: MaterialApp(
+          title: "GYM APK",
+          theme: ThemeData(
+            primarySwatch: Colors.blueGrey,
+          ),
+          home: const Homepage()),
     );
   }
 }

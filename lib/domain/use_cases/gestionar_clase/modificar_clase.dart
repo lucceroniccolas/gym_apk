@@ -6,14 +6,11 @@ class ModificarClaseCDU {
   ModificarClaseCDU(this.repoClases);
 
   Future<bool> execute(int idClase, Clase claseModificada) async {
-    if (idClase <= 0) {
-      throw Exception("El ID de la clase no es válido");
-    }
-    final claseExistente =
-        await repoClases.obtenerClasePorId(claseModificada.idClase);
-    if (claseExistente == null) {
-      throw Exception("El Rol con id: ${claseModificada.idClase} no existe.");
-    }
+    //final claseExistente =
+    // await repoClases.obtenerClasePorId(claseModificada.idClase);
+    //if (claseExistente == null) {
+    //throw Exception("El Rol con id: ${claseModificada.idClase} no existe.");
+    // }
     try {
       await repoClases.modificarClase(idClase, claseModificada);
       return true;

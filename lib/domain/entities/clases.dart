@@ -2,7 +2,7 @@ class Clase {
   int idClase;
   String nombreClase;
   String? descripcion;
-  //int cupos;
+  int? cupos;
   DateTime? horario;
   int? idProfesor;
   List<int>? inscriptos;
@@ -13,7 +13,7 @@ class Clase {
       {required this.idClase,
       required String nombreClase,
       required this.descripcion,
-      //required this.cupos,
+      required this.cupos,
       required this.horario,
       required this.idProfesor,
       required this.inscriptos})
@@ -39,7 +39,7 @@ class Clase {
         idClase: idClase,
         nombreClase: nuevoNombre,
         descripcion: descripcion ?? this.descripcion,
-        //cupos: cupos ?? this.cupos,
+        cupos: cupos ?? this.cupos,
         horario: horario ?? this.horario,
         idProfesor: idProfesor ?? this.idProfesor,
         inscriptos: inscriptos ?? this.inscriptos);

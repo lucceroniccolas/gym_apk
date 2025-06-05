@@ -3,26 +3,27 @@ import 'package:gym_apk/domain/repository/repo_clases.dart';
 
 class MemoriaClasesImpl implements RepoClases {
   //intancia estatica única que se crea UNA SOLA VEZ
-  static final MemoriaClasesImpl _instanciaClases =
-      MemoriaClasesImpl._privado();
+  MemoriaClasesImpl();
 
 // CONSTRUCTOR PRIVADO
-  MemoriaClasesImpl._privado();
-
-// DEVOLVEMOS LA INTANCIA
-  factory MemoriaClasesImpl() {
-    return _instanciaClases;
-  }
 
   final List<Clase> _clases = [
     Clase(
-        idClase: 1,
+        idClase: 0,
         nombreClase: "CrossFit Avanzado",
         descripcion: "Clase de crossfit 2hrs",
-        // cupos: 10,
         horario: DateTime.now(),
+        cupos: 5,
         idProfesor: 1,
-        inscriptos: [1])
+        inscriptos: [1]),
+    Clase(
+        idClase: 1,
+        nombreClase: "Boxeo",
+        descripcion: "Clase de boxeo 3hrs",
+        cupos: 2,
+        horario: DateTime.now(),
+        idProfesor: 3,
+        inscriptos: [3])
   ];
 
   @override
@@ -32,14 +33,13 @@ class MemoriaClasesImpl implements RepoClases {
 
   @override
   Future<void> crearClase(Clase nuevaClase) async {
+    nuevaClase.idClase = _clases.length + 1;
+
     _clases.add(nuevaClase);
   }
 
   @override
   Future<void> modificarClase(int idClase, Clase claseModificada) async {
-    if (claseModificada.idClase <= 0) {
-      throw Exception("Id de clase no válida");
-    }
     final index = _clases.indexWhere((clase) => clase.idClase == idClase);
     if (index == -1) {
       throw Exception("Clase con id ${claseModificada.idClase} no encontrada ");
@@ -51,6 +51,7 @@ class MemoriaClasesImpl implements RepoClases {
     final claseAnterior = _clases[index];
     _clases[index] = claseAnterior.copyWith(
       nombreClase: claseModificada.nombreClase,
+      cupos: claseModificada.cupos ?? claseAnterior.cupos,
       descripcion: claseModificada.descripcion ?? claseAnterior.descripcion,
       horario: claseModificada.horario ?? claseAnterior.horario,
       idProfesor: claseModificada.idProfesor ?? claseAnterior.idProfesor,

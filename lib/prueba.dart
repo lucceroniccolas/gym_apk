@@ -59,3 +59,30 @@ Future<void> main() async {
   //    print("Error: el diablo");
   //  }
 }
+
+
+
+
+
+
+          ElevatedButton.icon(
+              icon: const Icon(Icons.supervised_user_circle_sharp),
+              label: const Text("Usuarios"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const UsuariosView()),
+                );
+              },
+            )
+
+
+
+
+                    ChangeNotifierProvider(
+          create: (_) {
+            final providerUsuarios = getIt<UsuarioProvider>();
+            providerUsuarios.cargarUsuarios();
+            return providerUsuarios;
+          },
+        ),
