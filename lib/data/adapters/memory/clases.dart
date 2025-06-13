@@ -27,6 +27,16 @@ class MemoriaClasesImpl implements RepoClases {
   ];
 
   @override
+  Future<void> actualizarClase(Clase claseActulizada) async {
+    int index = _clases.indexWhere((c) => c.idClase == claseActulizada.idClase);
+    if (index != -1) {
+      _clases[index] = claseActulizada;
+    } else {
+      throw Exception("Clase no encontrada para actualizar.");
+    }
+  }
+
+  @override
   Future<void> borarClase(int idClase) async {
     _clases.removeWhere((clase) => clase.idClase == idClase);
   }

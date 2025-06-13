@@ -11,6 +11,8 @@
 
 //paquete get_it
 import 'package:get_it/get_it.dart';
+import 'package:gym_apk/data/adapters/memory/inscripciones.dart';
+import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
 //---Repositorios---
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 import 'package:gym_apk/domain/repository/repo_clases.dart';

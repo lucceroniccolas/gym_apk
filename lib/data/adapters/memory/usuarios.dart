@@ -14,7 +14,8 @@ class MemoriaUsuarioImpl implements RepoUsuario {
         apellido: "changas",
         correo: "nicolashdgg@gmail.com",
         rol: null,
-        pago: true)
+        pago: true,
+        fechaDePago: DateTime.now())
   ];
 
   @override
@@ -59,5 +60,11 @@ class MemoriaUsuarioImpl implements RepoUsuario {
   @override
   Future<Usuario?> obtenerUsuarioPorId(int idUsuario) async {
     return _usuarios.firstWhere((usuario) => usuario.idUsuario == idUsuario);
+  }
+
+  @override
+  Future<DateTime> actualizarFechadePago(int idUsuario) {
+    // TODO: implement actualizarFechadePago
+    throw UnimplementedError();
   }
 }

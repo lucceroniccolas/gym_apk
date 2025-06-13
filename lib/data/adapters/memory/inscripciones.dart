@@ -17,27 +17,42 @@ class MemoriaInscripcionesImpl implements RepoInscripcion {
 
   @override
   Future<void> cancelarInscripcion(int idUsuario, int idClase) async {
+    final clase = await _repoClases.obtenerClasePorId(idClase);
+    if (clase == null) {
+      throw Exception("Clase con id: $idClase  no encontrada");
+    }
     _inscripciones.removeWhere((inscripcion) =>
         inscripcion.idUsuario == idUsuario && inscripcion.idClase == idClase);
   }
 
   @override
   Future<void> inscribirUsuarioEnClase(int idUsuario, int idClase) async {
-//verificacion de que existe el usuario
+//verificación de que existe el usuario
     final usuario = await _repoUsuario.obtenerUsuarioPorId(idUsuario);
     if (usuario == null) {
       throw Exception("Usuario con id $idUsuario no encontrado.");
     }
-// verifacion de que existe la clase
+//Verificacion de pago de cuota
+    if (!usuario.pago) {
+      throw Exception("El usuario no pagó su couta de gimansio");
+    }
+// verificación de que existe la clase
     final clase = await _repoClases.obtenerClasePorId(idClase);
     if (clase == null) {
       throw Exception("Clase con id $idClase no encontrado.");
     }
-// verificando que el usuario no esté inscripto a una clase
+// verificación de que el usuario no esté inscripto a una clase
     bool yaInscripto = _inscripciones.any((inscripcion) =>
         inscripcion.idUsuario == idUsuario && inscripcion.idClase == idClase);
     if (yaInscripto) {
       throw Exception("El usuario ya está inscripto en esta clase.");
+    }
+//Verificación de que haya cupos disponibles
+    final inscripcionesEnClase = _inscripciones
+        .where((inscripcion) => inscripcion.idClase == idClase)
+        .length;
+    if (clase.cupos != null && inscripcionesEnClase >= clase.cupos!) {
+      throw Exception("La clase ya alcanzó su cupo maximo");
     }
 
 // inscribimos al usuario a su clase
@@ -48,10 +63,13 @@ class MemoriaInscripcionesImpl implements RepoInscripcion {
         fechaInscripcion: DateTime.now(),
         idClase: idClase);
     _inscripciones.add(nuevaInscripcion);
+    // restamos un cupo y actualizamos la clase
+    clase.cupos = clase.cupos! - 1;
+    await _repoClases.actualizarClase(clase);
   }
 
   @override
-  Future<List<Clase>> obtenerClasesInscriptas(int idUsuario) async {
+  Future<List<Clase>> obtenerClasesInscriptasDeUsuario(int idUsuario) async {
     List<int> idsClases = _inscripciones
         .where((inscripcion) => inscripcion.idUsuario == idUsuario)
         .map((inscripcion) => inscripcion.idClase)
@@ -68,7 +86,7 @@ class MemoriaInscripcionesImpl implements RepoInscripcion {
   }
 
   @override
-  Future<List<Usuario>> obtenerUsuarioInscriptos(int idClase) async {
+  Future<List<Usuario>> obtenerUsuariosInscriptosDeClase(int idClase) async {
     List<int> idsUsuarios = _inscripciones
         .where((inscripcion) => inscripcion.idClase == idClase)
         .map((inscripcion) => inscripcion.idUsuario)
@@ -82,5 +100,10 @@ class MemoriaInscripcionesImpl implements RepoInscripcion {
       }
     }
     return usuarios;
+  }
+
+  @override
+  Future<List<Inscripcion>> obtenerInscripciones() async {
+    return _inscripciones;
   }
 }

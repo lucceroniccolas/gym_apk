@@ -12,6 +12,7 @@ abstract class RepoClases {
   Future<List<Clase>> obtenerClases();
   Future<Clase?> obtenerClasePorId(int idClase);
   Future<DateTime?> obtenerHorariosPorIdClase(int idClase);
+  Future<void> actualizarClase(Clase clase);
 }
 //qué hace Future<void>:
 // Indica que la operación puede ser asincrónica
