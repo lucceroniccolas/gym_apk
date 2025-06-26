@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'clases/clase_pantalla.dart';
+import 'usuarios/usuario_pantalla.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -24,9 +25,22 @@ class Homepage extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.people),
+              label: const Text("Usuarios"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const UsuariosView()),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+

@@ -26,6 +26,11 @@ class MyApp extends StatelessWidget {
           providerClases.obtenerClases();
           return providerClases;
         }),
+         ChangeNotifierProvider(create: (_) {
+          final providerUsuarios = getIt<UsuarioProvider>();
+          providerUsuarios.cargarUsuarios(); // 👈 Este es el importante
+          return providerUsuarios;
+        }),
       ],
       child: MaterialApp(
           title: "GYM APK",

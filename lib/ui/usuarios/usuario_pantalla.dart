@@ -1,44 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:gym_apk/providers/usuario_provider.dart';
-import 'package:gym_apk/ui/clases/widgets/formulario_obtener_clase_por_id.dart';
 import 'package:provider/provider.dart';
-import '../../providers/clases_provider.dart';
+import 'package:gym_apk/providers/usuario_provider.dart';
 
-import '../clases/widgets/formulario_crear_clase.dart';
-import '../clases/widgets/formulario_modificar_clase.dart';
-import '../clases/widgets/formulario_eliminar_clase.dart';
+import 'widgets/formulario_crear_usuario.dart';
+import 'widgets/formulario_modificar_usuario.dart';
+import 'widgets/formulario_eliminar_usuario.dart';
+import 'widgets/formulario_mostrar_usuario_por_id.dart';
 
 class UsuariosView extends StatelessWidget {
   const UsuariosView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final usuariosProvider = Provider.of<UsuarioProvider>(context);
-    final usuarioSeleccionada = usuariosProvider.usuarioSeleccionado;
+    final usuarioProvider = Provider.of<UsuarioProvider>(context);
+    final usuarioSeleccionado = usuarioProvider.usuarioSeleccionado;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Gestion de Usuarios"),
+        title: const Text("Gestión de Usuarios"),
       ),
-      body: usuariosProvider.isLoading
+      body: usuarioProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Expanded(
                   child: ListView.builder(
-                    itemCount: usuariosProvider.usuarios.length,
+                    itemCount: usuarioProvider.usuarios.length,
                     itemBuilder: (context, index) {
-                      final usuario = usuariosProvider.usuarios[index];
+                      final usuario = usuarioProvider.usuarios[index];
                       return ListTile(
-                        title: Text(usuario.nombre),
-                        subtitle: Text(usuario.apellido),
-                        trailing: Text(
-                          usuario.pago.toString(),
-                        ),
-                        selected:
-                            usuarioSeleccionada?.idUsuario == usuario.idUsuario,
+                        title: Text("${usuario.nombre} ${usuario.apellido}"),
+                        subtitle: Text(usuario.correo ?? "Sin correo"),
+                        trailing: Text(usuario.pago ? "Pagó" : "No pagó"),
+                        selected: usuarioSeleccionado?.idUsuario == usuario.idUsuario,
                         onTap: () {
-                          usuariosProvider.usuarioSeleccionado = usuario;
+                          usuarioProvider.usuarioSeleccionado = usuario;
                         },
                       );
                     },
@@ -52,31 +48,31 @@ class UsuariosView extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        mostrarFormularioCrearClase(context);
+                        mostrarFormularioCrearUsuario(context);
                       },
-                      child: const Text("Crear Clase"),
+                      child: const Text("Crear Usuario"),
                     ),
                     ElevatedButton(
-                      onPressed: usuarioSeleccionada == null
+                      onPressed: usuarioSeleccionado == null
                           ? null
-                          : () => mostrarDialogoEliminarClase(
-                              context, usuarioSeleccionada.idUsuario),
-                      child: const Text("Eliminar Clase"),
+                          : () => mostrarDialogoEliminarUsuario(
+                              context, usuarioSeleccionado.idUsuario),
+                      child: const Text("Eliminar Usuario"),
                     ),
                     ElevatedButton(
-                      onPressed: usuarioSeleccionada == null
+                      onPressed: usuarioSeleccionado == null
                           ? null
-                          : () => mostrarFormularioModificarClase(
-                              context, usuarioSeleccionada),
-                      child: const Text("Modificar Clase"),
+                          : () => mostrarFormularioModificarUsuario(
+                              context, usuarioSeleccionado),
+                      child: const Text("Modificar Usuario"),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        if (usuarioSeleccionada != null) {
+                        if (usuarioSeleccionado != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  "Usuario seleccionado: ${usuarioSeleccionada.nombre}"),
+                                  "Usuario seleccionado: ${usuarioSeleccionado.nombre}"),
                             ),
                           );
                         }
@@ -84,14 +80,12 @@ class UsuariosView extends StatelessWidget {
                       child: const Text("Usuario seleccionado"),
                     ),
                     ElevatedButton(
-                      onPressed: () => mostarDialogoObtenerClasePorId(context),
-                      child: const Text("Detalles de Usuario"),
+                      onPressed: () => mostrarDialogoObtenerUsuarioPorId(context),
+                      child: const Text("Buscar usuario por ID"),
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 16,
-                )
+                const SizedBox(height: 16),
               ],
             ),
     );
