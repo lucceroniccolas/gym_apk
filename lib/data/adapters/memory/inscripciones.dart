@@ -13,73 +13,38 @@ class MemoriaInscripcionesImpl implements RepoInscripcion {
   // inyectando los repos desde el contructor
   //podemos registrarlo con get_it y tener control total sobre las dependecias
   final List<Inscripcion> _inscripciones = [];
-  int _contadorId = 1;
 
+  ///CANCELAR
   @override
-  Future<void> cancelarInscripcion(int idUsuario, int idClase) async {
-    final clase = await _repoClases.obtenerClasePorId(idClase);
-    if (clase == null) {
-      throw Exception("Clase con id: $idClase  no encontrada");
-    }
+  Future<void> eliminarInscripcion(int idUsuario, int idClase) async {
     _inscripciones.removeWhere((inscripcion) =>
         inscripcion.idUsuario == idUsuario && inscripcion.idClase == idClase);
   }
 
+  ///INSCRIBIR
   @override
-  Future<void> inscribirUsuarioEnClase(int idUsuario, int idClase) async {
-//verificación de que existe el usuario
-    final usuario = await _repoUsuario.obtenerUsuarioPorId(idUsuario);
-    if (usuario == null) {
-      throw Exception("Usuario con id $idUsuario no encontrado.");
-    }
-//Verificacion de pago de cuota
-    if (!usuario.pago) {
-      throw Exception("El usuario no pagó su couta de gimansio");
-    }
-// verificación de que existe la clase
-    final clase = await _repoClases.obtenerClasePorId(idClase);
-    if (clase == null) {
-      throw Exception("Clase con id $idClase no encontrado.");
-    }
-// verificación de que el usuario no esté inscripto a una clase
-    bool yaInscripto = _inscripciones.any((inscripcion) =>
-        inscripcion.idUsuario == idUsuario && inscripcion.idClase == idClase);
-    if (yaInscripto) {
-      throw Exception("El usuario ya está inscripto en esta clase.");
-    }
-//Verificación de que haya cupos disponibles
-    final inscripcionesEnClase = _inscripciones
-        .where((inscripcion) => inscripcion.idClase == idClase)
-        .length;
-    if (clase.cupos != null && inscripcionesEnClase >= clase.cupos!) {
-      throw Exception("La clase ya alcanzó su cupo maximo");
-    }
-
-// inscribimos al usuario a su clase
-
-    final nuevaInscripcion = Inscripcion(
-        idInscripcion: _contadorId++,
-        idUsuario: idUsuario,
-        fechaInscripcion: DateTime.now(),
-        idClase: idClase);
-    _inscripciones.add(nuevaInscripcion);
-    // restamos un cupo y actualizamos la clase
-    clase.cupos = clase.cupos! - 1;
-    await _repoClases.actualizarClase(clase);
+  Future<void> agregarInscripcion(Inscripcion inscripcion) async {
+    _inscripciones.add(inscripcion);
   }
 
   @override
   Future<List<Clase>> obtenerClasesInscriptasDeUsuario(int idUsuario) async {
     List<int> idsClases = _inscripciones
-        .where((inscripcion) => inscripcion.idUsuario == idUsuario)
-        .map((inscripcion) => inscripcion.idClase)
-        .toList();
+        .where((inscripcion) =>
+            inscripcion.idUsuario ==
+            idUsuario) //Filtramos todas las inscripciones donde coincida el idUsu
+        .map((inscripcion) =>
+            inscripcion.idClase) //extraemos solo los idClase de la inscripcion
+        .toList(); //devolvemos una Lista de enteros con todos los IDs de clases a las que está inscrito
 
-    List<Clase> clases = [];
+    List<Clase> clases =
+        []; //creamos una lista donde se guardarán las clases completas (no solo los IDs)
+
     for (int id in idsClases) {
+      //recorremos los idClases buscando la clase correspondiente (repo.obtenerClasesporID)
       Clase? clase = await _repoClases.obtenerClasePorId(id);
       if (clase != null) {
-        clases.add(clase);
+        clases.add(clase); //si existe la clase la agregamos a la lista
       }
     }
     return clases;

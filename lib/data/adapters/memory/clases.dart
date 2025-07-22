@@ -4,26 +4,26 @@ import 'package:gym_apk/domain/repository/repo_clases.dart';
 class MemoriaClasesImpl implements RepoClases {
   //intancia estatica única que se crea UNA SOLA VEZ
   MemoriaClasesImpl();
-
+  int _contadorId = 0;
 // CONSTRUCTOR PRIVADO
 
   final List<Clase> _clases = [
     Clase(
-        idClase: 0,
-        nombreClase: "CrossFit Avanzado",
-        descripcion: "Clase de crossfit 2hrs",
-        horario: DateTime.now(),
-        cupos: 5,
-        idProfesor: 1,
-        inscriptos: [1]),
+      idClase: 0,
+      nombreClase: "CrossFit Avanzado",
+      descripcion: "Clase de crossfit 2hrs",
+      horario: DateTime.now(),
+      cupos: 5,
+      idProfesor: 1,
+    ),
     Clase(
-        idClase: 1,
-        nombreClase: "Boxeo",
-        descripcion: "Clase de boxeo 3hrs",
-        cupos: 2,
-        horario: DateTime.now(),
-        idProfesor: 3,
-        inscriptos: [3])
+      idClase: 1,
+      nombreClase: "Boxeo",
+      descripcion: "Clase de boxeo 3hrs",
+      cupos: 2,
+      horario: DateTime.now(),
+      idProfesor: 3,
+    )
   ];
 
   @override
@@ -31,8 +31,6 @@ class MemoriaClasesImpl implements RepoClases {
     int index = _clases.indexWhere((c) => c.idClase == claseActulizada.idClase);
     if (index != -1) {
       _clases[index] = claseActulizada;
-    } else {
-      throw Exception("Clase no encontrada para actualizar.");
     }
   }
 
@@ -43,7 +41,7 @@ class MemoriaClasesImpl implements RepoClases {
 
   @override
   Future<void> crearClase(Clase nuevaClase) async {
-    nuevaClase.idClase = _clases.length + 1;
+    nuevaClase.idClase = _contadorId++;
 
     _clases.add(nuevaClase);
   }
@@ -52,21 +50,15 @@ class MemoriaClasesImpl implements RepoClases {
   Future<void> modificarClase(int idClase, Clase claseModificada) async {
     final index = _clases.indexWhere((clase) => clase.idClase == idClase);
     if (index == -1) {
-      throw Exception("Clase con id ${claseModificada.idClase} no encontrada ");
+      final claseAnterior = _clases[index];
+      _clases[index] = claseAnterior.copyWith(
+        nombreClase: claseModificada.nombreClase,
+        cupos: claseModificada.cupos,
+        descripcion: claseModificada.descripcion ?? claseAnterior.descripcion,
+        horario: claseModificada.horario ?? claseAnterior.horario,
+        idProfesor: claseModificada.idProfesor ?? claseAnterior.idProfesor,
+      );
     }
-    if (claseModificada.idClase != idClase) {
-      throw Exception(
-          "¿Que hacemos trollins?, No se puede modificar el ID de la clase.");
-    }
-    final claseAnterior = _clases[index];
-    _clases[index] = claseAnterior.copyWith(
-      nombreClase: claseModificada.nombreClase,
-      cupos: claseModificada.cupos ?? claseAnterior.cupos,
-      descripcion: claseModificada.descripcion ?? claseAnterior.descripcion,
-      horario: claseModificada.horario ?? claseAnterior.horario,
-      idProfesor: claseModificada.idProfesor ?? claseAnterior.idProfesor,
-      inscriptos: claseModificada.inscriptos ?? claseAnterior.inscriptos,
-    );
   }
 
   @override
@@ -83,7 +75,6 @@ class MemoriaClasesImpl implements RepoClases {
   Future<DateTime?> obtenerHorariosPorIdClase(int idClase) async {
     final clase = _clases.firstWhere(
       (clase) => clase.idClase == idClase,
-      orElse: () => throw Exception("clase con id $idClase no encontrado"),
     );
     return clase.horario;
   }

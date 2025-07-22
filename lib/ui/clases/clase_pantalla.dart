@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gym_apk/ui/clases/widgets/formulario_obtener_clase_por_id.dart';
+import 'package:gym_apk/ui/clases/formulario_obtener_clase_por_id.dart';
 import 'package:provider/provider.dart';
 import '../../providers/clases_provider.dart';
 
-import 'widgets/formulario_crear_clase.dart';
-import 'widgets/formulario_modificar_clase.dart';
-import 'widgets/formulario_eliminar_clase.dart';
+import 'formulario_crear_clase.dart';
+import 'formulario_modificar_clase.dart';
+import 'formulario_eliminar_clase.dart';
 
 class ClasesView extends StatelessWidget {
   const ClasesView({super.key});

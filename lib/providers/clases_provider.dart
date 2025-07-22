@@ -65,10 +65,20 @@ class ClasesProvider extends ChangeNotifier {
   Future<bool> crearClase(Clase nuevaClase) async {
     _isLoading = true;
     notifyListeners();
-    bool resultado = await _crearClase.execute(nuevaClase);
-    _isLoading = false;
-    notifyListeners();
-    return resultado;
+    try {
+      bool resultado = await _crearClase.execute(nuevaClase);
+      notifyListeners();
+      if (resultado) {
+        await obtenerClases();
+      }
+      return (resultado);
+    } catch (e) {
+      print("Error al crear clase $e");
+      return (false);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> eliminarClase(int idClase) async {
@@ -78,7 +88,7 @@ class ClasesProvider extends ChangeNotifier {
       notifyListeners();
       final resultado = await _eliminarClase.execute(idClase);
       if (resultado) {
-        _clases = await _obtenerTodasLasClases.execute();
+        await obtenerClases();
         if (_claseSeleccionada?.idClase == idClase) {
           _claseSeleccionada = null;
         }
@@ -101,7 +111,7 @@ class ClasesProvider extends ChangeNotifier {
       bool resultado = await _modificarClase.execute(idClase, claseModificada);
 
       if (resultado) {
-        _clases = await _obtenerTodasLasClases.execute(); //recargamos los datos
+        await obtenerClases(); //recargamos los datos
       }
       if (_claseSeleccionada?.idClase == idClase) {
         _claseSeleccionada = _clases.firstWhere((c) => c.idClase == idClase);

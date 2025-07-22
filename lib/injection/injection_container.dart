@@ -11,11 +11,12 @@
 
 //paquete get_it
 import 'package:get_it/get_it.dart';
-import 'package:gym_apk/data/adapters/memory/inscripciones.dart';
-import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
+
 //---Repositorios---
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 import 'package:gym_apk/domain/repository/repo_clases.dart';
+import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
+
 //casos de uso----Usuario----
 import 'package:gym_apk/domain/use_cases/gestionar_usuario/eliminar_usuario.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_usuario/crear_usuario.dart';
@@ -29,14 +30,22 @@ import 'package:gym_apk/domain/use_cases/gestionar_clase/modificar_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_clase_por_id.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_clases.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_horario_de_clase.dart';
+//Casos de uso---Inscripciones---
+import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/cancelar_inscripcion_cdu.dart';
+import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/inscribir_alumno_en_clase_cdu.dart';
+import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_clases_inscriptas_cdu.dart';
+import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_inscripciones_cdu.dart';
+import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_usuarios_inscriptos_cdu.dart';
 
 //---Providers---
 import 'package:gym_apk/providers/usuario_provider.dart';
 import 'package:gym_apk/providers/clases_provider.dart';
+import 'package:gym_apk/providers/inscripcion_provider.dart';
 
 //Adaptadores
 import 'package:gym_apk/data/adapters/memory/usuarios.dart';
 import 'package:gym_apk/data/adapters/memory/clases.dart';
+import 'package:gym_apk/data/adapters/memory/inscripciones.dart';
 
 final getIt = GetIt.instance;
 
@@ -46,10 +55,16 @@ Future<void> init() async {
   getIt.registerLazySingleton<RepoUsuario>(() => MemoriaUsuarioImpl());
 // Esto significa: "Cuando alguien pida un RepoUsuario, devolvé esta instancia (MemoriaUsuarioImpl)
   //--ADAPTADORES-- (Clase)
-  getIt.registerSingleton<RepoClases>(MemoriaClasesImpl());
+  getIt.registerLazySingleton<RepoClases>(() => MemoriaClasesImpl());
+  //--ADAPTADORES-- (inscripción)
+  getIt.registerLazySingleton<RepoInscripcion>(() => MemoriaInscripcionesImpl(
+        getIt<RepoClases>(),
+        getIt<RepoUsuario>(),
+      )); //le pasamos las instancias que ya registramos anteriormente para crear el adaptador de incripciones
 
   _registarCasoDeUsoUsuario();
   _registrarCasoDeUsoClase();
+  _registrarCasoDeUsoInscripciones();
 
   getIt.registerFactory<UsuarioProvider>(() => UsuarioProvider(
         getIt<CrearusuarioCDU>(),
@@ -67,6 +82,18 @@ Future<void> init() async {
       getIt<ModificarClaseCDU>(),
       getIt<ObtenerClasePorIdCDU>(),
       getIt<ObtenerHorarioPorIdDeClaseCDU>(),
+      getIt<ObtenerTodasLasClasesCDU>(),
+    ),
+  );
+//--PROVIDERS--(Inscripcion)
+  getIt.registerFactory<InscripcionProvider>(
+    () => InscripcionProvider(
+      getIt<CancelarInscripcionCDU>(),
+      getIt<InscribirAlumnoEnClaseCDU>(),
+      getIt<ObtenerClasesInscriptasDeUsuarioCDU>(),
+      getIt<ObtenerUsuariosInscriptosCDU>(),
+      getIt<ObtenerInscripcionesCDU>(),
+      getIt<ObtenerTodosLosUsuariosCDU>(),
       getIt<ObtenerTodasLasClasesCDU>(),
     ),
   );
@@ -91,4 +118,16 @@ void _registrarCasoDeUsoClase() {
   getIt.registerLazySingleton(() => ObtenerClasePorIdCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerTodasLasClasesCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerHorarioPorIdDeClaseCDU(getIt()));
+}
+
+// --USE CASES--//(registration)
+void _registrarCasoDeUsoInscripciones() {
+  getIt.registerLazySingleton(() => CancelarInscripcionCDU(
+      getIt<RepoInscripcion>(), getIt<RepoClases>(), getIt<RepoUsuario>()));
+  getIt.registerLazySingleton(() => InscribirAlumnoEnClaseCDU(
+      getIt<RepoInscripcion>(), getIt<RepoClases>(), getIt<RepoUsuario>()));
+  getIt.registerLazySingleton(
+      () => ObtenerClasesInscriptasDeUsuarioCDU(getIt()));
+  getIt.registerLazySingleton(() => ObtenerUsuariosInscriptosCDU(getIt()));
+  getIt.registerLazySingleton(() => ObtenerInscripcionesCDU(getIt()));
 }

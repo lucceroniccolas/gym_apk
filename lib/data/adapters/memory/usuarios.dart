@@ -6,14 +6,14 @@ import 'package:gym_apk/domain/repository/repo_usuario.dart';
 class MemoriaUsuarioImpl implements RepoUsuario {
   MemoriaUsuarioImpl();
 
+  int _contadorId = 2;
   // Lista que guarda los usuarios cargados en memoria
   final List<Usuario> _usuarios = [
     Usuario(
-        idUsuario: 3,
+        idUsuario: 1,
         nombre: "chimi",
         apellido: "changas",
         correo: "nicolashdgg@gmail.com",
-        rol: null,
         pago: true,
         fechaDePago: DateTime.now())
   ];
@@ -24,14 +24,15 @@ class MemoriaUsuarioImpl implements RepoUsuario {
   }
 
   @override
-  Future<void> borrarUsuario(int id) async {
-    _usuarios.removeWhere((usuario) => usuario.idUsuario == id);
+  Future<void> borrarUsuario(int idUsuario) async {
+    _usuarios.removeWhere((usuario) => usuario.idUsuario == idUsuario);
   }
 
   @override
   Future<void> crearUsuario(Usuario usuario) async {
-    usuario.idUsuario = _usuarios.length + 1;
+    usuario.idUsuario = _contadorId++;
     _usuarios.add(usuario);
+    print(usuario.idUsuario);
   }
 
   @override
@@ -41,30 +42,15 @@ class MemoriaUsuarioImpl implements RepoUsuario {
         usuario.idUsuario ==
         idUsuario); //Busca el índice en la lista _usuarios usando el id del usuario que se quiere modificar.
     if (index != -1) {
-      if (usuarioModificado.idUsuario != idUsuario) {
-        throw Exception("No se puede modificar el ID del usuario");
-      }
-      _usuarios[index] = _usuarios[index].copyWith(
-          nombre: usuarioModificado.nombre ?? _usuarios[index].nombre,
-          apellido: usuarioModificado.apellido ?? _usuarios[index].apellido,
-          correo: usuarioModificado.correo ?? _usuarios[index].correo,
-          rol: usuarioModificado.rol ??
-              _usuarios[index]
-                  .rol); // Si el índice existe (index != -1), actualiza el usuario en esa posición.
-    } else {
-      throw Exception(
-          "Usuario con id ${usuarioModificado.idUsuario} no encontrado"); //Lanza una excepción si el usuario no existe, lo que permite a la capa superior manejar este error adecuadamente.
+      _usuarios[index] =
+          usuarioModificado; // Si el índice existe (index != -1), actualiza el usuario en esa posición.
     }
   }
 
   @override
   Future<Usuario?> obtenerUsuarioPorId(int idUsuario) async {
-    return _usuarios.firstWhere((usuario) => usuario.idUsuario == idUsuario);
-  }
-
-  @override
-  Future<DateTime> actualizarFechadePago(int idUsuario) {
-    // TODO: implement actualizarFechadePago
-    throw UnimplementedError();
+    return _usuarios.where((usuario) => usuario.idUsuario == idUsuario).isEmpty
+        ? null
+        : _usuarios.firstWhere((u) => u.idUsuario == idUsuario);
   }
 }

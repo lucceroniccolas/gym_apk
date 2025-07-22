@@ -7,5 +7,4 @@ abstract class RepoUsuario {
   Future<void> modificarUsuario(int idUsuario, Usuario usuario);
   Future<List<Usuario>> obtenerTodosLosUsuarios();
   Future<Usuario?> obtenerUsuarioPorId(int idUsuario);
-  Future<DateTime> actualizarFechadePago(int idUsuario);
 }

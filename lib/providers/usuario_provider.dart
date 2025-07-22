@@ -6,6 +6,8 @@ import 'package:gym_apk/domain/use_cases/gestionar_usuario/obtener_usuario_por_i
 import 'package:gym_apk/domain/entities/usuario.dart';
 import 'package:flutter/material.dart';
 
+//NOTA: Mejorar el codigo para que se usen try, catch y finally
+
 class UsuarioProvider extends ChangeNotifier {
   final CrearusuarioCDU _crearusuario;
   final EliminarUsuarioCDU _eliminarUsuario;

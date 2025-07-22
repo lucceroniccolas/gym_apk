@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:gym_apk/providers/usuario_provider.dart';
+import 'package:provider/provider.dart';
 
-import 'widgets/formulario_crear_usuario.dart';
-import 'widgets/formulario_modificar_usuario.dart';
-import 'widgets/formulario_eliminar_usuario.dart';
-import 'widgets/formulario_mostrar_usuario_por_id.dart';
+import 'formulario_crear_usuario.dart';
+import 'formulario_modificar_usuario.dart';
+import 'formulario_eliminar_usuario.dart';
+import 'formulario_mostrar_usuario_por_id.dart';
 
 class UsuariosView extends StatelessWidget {
   const UsuariosView({super.key});
@@ -30,9 +30,12 @@ class UsuariosView extends StatelessWidget {
                       final usuario = usuarioProvider.usuarios[index];
                       return ListTile(
                         title: Text("${usuario.nombre} ${usuario.apellido}"),
-                        subtitle: Text(usuario.correo ?? "Sin correo"),
-                        trailing: Text(usuario.pago ? "Pagó" : "No pagó"),
-                        selected: usuarioSeleccionado?.idUsuario == usuario.idUsuario,
+                        subtitle: Text(usuario.correo ?? "sin correo"),
+                        trailing: Text(
+                          usuario.pago ? "Pagó" : "No pagó",
+                        ),
+                        selected:
+                            usuarioSeleccionado?.idUsuario == usuario.idUsuario,
                         onTap: () {
                           usuarioProvider.usuarioSeleccionado = usuario;
                         },
@@ -80,12 +83,15 @@ class UsuariosView extends StatelessWidget {
                       child: const Text("Usuario seleccionado"),
                     ),
                     ElevatedButton(
-                      onPressed: () => mostrarDialogoObtenerUsuarioPorId(context),
-                      child: const Text("Buscar usuario por ID"),
+                      onPressed: () =>
+                          mostrarDialogoObtenerUsuarioPorId(context),
+                      child: const Text("Detalles de Usuario"),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(
+                  height: 16,
+                )
               ],
             ),
     );

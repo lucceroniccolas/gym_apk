@@ -12,10 +12,11 @@ class Inscripcion {
   Inscripcion copyWith({
     int? idUsuario,
     int? idClase,
+    int? idInscripcion,
     DateTime? fechaInscripcion,
   }) {
     return Inscripcion(
-        idInscripcion: idInscripcion,
+        idInscripcion: idInscripcion ?? this.idInscripcion,
         idUsuario: idUsuario ?? this.idUsuario,
         fechaInscripcion: fechaInscripcion ?? this.fechaInscripcion,
         idClase: idClase ?? this.idClase);
