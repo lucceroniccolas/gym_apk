@@ -105,7 +105,10 @@ void _registarCasoDeUsoUsuario() {
   getIt.registerLazySingleton(() => ModificarUsuarioCDU(getIt<RepoUsuario>()));
   getIt.registerLazySingleton(
       () => ObtenerUsuarioPorIdCDU(getIt<RepoUsuario>()));
-  getIt.registerLazySingleton(() => EliminarUsuarioCDU(getIt<RepoUsuario>()));
+
+  getIt.registerLazySingleton(() => EliminarUsuarioCDU(getIt<RepoUsuario>(),
+      getIt<RepoInscripcion>(), getIt<CancelarInscripcionCDU>()));
+
   getIt.registerLazySingleton(
       () => ObtenerTodosLosUsuariosCDU(getIt<RepoUsuario>()));
 }

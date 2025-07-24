@@ -5,13 +5,14 @@ class Usuario {
   String? correo;
   bool pago;
   DateTime? fechaDePago;
-  Usuario(
-      {required this.idUsuario,
-      required this.nombre,
-      required this.correo,
-      required this.apellido,
-      required this.pago,
-      required this.fechaDePago});
+  Usuario({
+    required this.idUsuario,
+    required this.nombre,
+    required this.correo,
+    required this.apellido,
+    required this.pago,
+    required this.fechaDePago,
+  });
   Usuario copyWith({
     String? nombre,
     String? apellido,

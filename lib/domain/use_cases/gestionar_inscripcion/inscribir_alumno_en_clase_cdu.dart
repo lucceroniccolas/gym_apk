@@ -18,7 +18,7 @@ class InscribirAlumnoEnClaseCDU {
     final clase = await _verificarClaseExiste(idClase);
 
     _verificarUsuarioPago(usuario);
-    _verificarUsuarioNoInscripto(idUsuario, idClase);
+    await _verificarUsuarioNoInscripto(idUsuario, idClase);
     _verificarCuposDisponibles(clase);
     final inscripcion = Inscripcion(
         idInscripcion: DateTime.now().millisecondsSinceEpoch,

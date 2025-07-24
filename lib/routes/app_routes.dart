@@ -2,7 +2,7 @@ import 'package:gym_apk/ui/inscripciones/inscripcion_pantalla.dart';
 import 'package:gym_apk/ui/inscripciones/cancelar_inscripcion.dart';
 import 'package:gym_apk/ui/inscripciones/inscribir_alumno.dart';
 import 'package:gym_apk/ui/inscripciones/mostrar_alumnos_inscriptos_a_clase.dart';
-//import 'package:gym_apk/ui/inscripciones/mostrar_clases_inscriptas_del_alumno.dart';
+import 'package:gym_apk/ui/inscripciones/mostrar_clases_inscriptas_del_alumno.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
@@ -19,7 +19,7 @@ class AppRoutes {
     inscribirAlumno: (context) => const InscribirAlumnoView(),
     cancelarInscripcion: (context) => const CancelarInscripcionView(),
     mostarInscriptosDeClase: (context) => const MostrarInscriptosView(),
-    // mostrarClasesInscriptasDeAlumno: (context) =>
-    //   const MostrarClasesInscriptasView(),
+    mostrarClasesInscriptasDeAlumno: (context) =>
+        const MostrarClaseInscriptaAlumnoView(),
   };
 }

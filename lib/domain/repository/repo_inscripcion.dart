@@ -8,7 +8,4 @@ abstract class RepoInscripcion {
   Future<List<Usuario>> obtenerUsuariosInscriptosDeClase(int idClase);
   Future<List<Clase>> obtenerClasesInscriptasDeUsuario(int idUsuario);
   Future<List<Inscripcion>> obtenerInscripciones();
-
-  //logica transversal
-  Future<void> eliminarInscripcionesDeUsuario(int idUsuario);
 }
