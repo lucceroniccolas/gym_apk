@@ -43,16 +43,19 @@ import 'package:gym_apk/providers/clases_provider.dart';
 import 'package:gym_apk/providers/inscripcion_provider.dart';
 
 //Adaptadores
-import 'package:gym_apk/data/adapters/memory/usuarios.dart';
 import 'package:gym_apk/data/adapters/memory/clases.dart';
 import 'package:gym_apk/data/adapters/memory/inscripciones.dart';
-
+//Adaptadores de memoria hive
+import 'package:gym_apk/data/adapters/memory/hive/usuarios_hive.dart';
+import 'package:gym_apk/data/adapters/memory/models/usuario_hive.dart';
+import 'package:hive/hive.dart';
 final getIt = GetIt.instance;
 
 Future<void> init() async {
   //--ADAPTADORES--  (Usuarios)
   //Instancia única "perezosa" (adaptadores)
-  getIt.registerLazySingleton<RepoUsuario>(() => MemoriaUsuarioImpl());
+  final usuariosBox = await Hive.openBox<UsuarioHive>('usuariosBox');
+  getIt.registerLazySingleton<RepoUsuario>(() => HiveUsuarioImpl(usuariosBox));
 // Esto significa: "Cuando alguien pida un RepoUsuario, devolvé esta instancia (MemoriaUsuarioImpl)
   //--ADAPTADORES-- (Clase)
   getIt.registerLazySingleton<RepoClases>(() => MemoriaClasesImpl());
