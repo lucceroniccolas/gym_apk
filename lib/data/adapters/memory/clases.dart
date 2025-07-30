@@ -14,7 +14,6 @@ class MemoriaClasesImpl implements RepoClases {
       descripcion: "Clase de crossfit 2hrs",
       horario: DateTime.now(),
       cupos: 5,
-      idProfesor: 1,
     ),
     Clase(
       idClase: 1,
@@ -22,7 +21,6 @@ class MemoriaClasesImpl implements RepoClases {
       descripcion: "Clase de boxeo 3hrs",
       cupos: 2,
       horario: DateTime.now(),
-      idProfesor: 3,
     )
   ];
 
@@ -56,7 +54,6 @@ class MemoriaClasesImpl implements RepoClases {
         cupos: claseModificada.cupos,
         descripcion: claseModificada.descripcion ?? claseAnterior.descripcion,
         horario: claseModificada.horario ?? claseAnterior.horario,
-        idProfesor: claseModificada.idProfesor ?? claseAnterior.idProfesor,
       );
     }
   }

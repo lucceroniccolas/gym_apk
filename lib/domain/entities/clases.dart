@@ -4,14 +4,12 @@ class Clase {
   String? descripcion;
   int cupos;
   DateTime? horario;
-  int? idProfesor;
   Clase({
     required this.idClase,
     required this.nombreClase,
     required this.descripcion,
     required this.cupos,
     required this.horario,
-    required this.idProfesor,
   });
   Clase copyWith({
     required String nombreClase,
@@ -26,7 +24,6 @@ class Clase {
       descripcion: descripcion ?? this.descripcion,
       cupos: this.cupos,
       horario: horario ?? this.horario,
-      idProfesor: idProfesor ?? this.idProfesor,
     );
   }
 }

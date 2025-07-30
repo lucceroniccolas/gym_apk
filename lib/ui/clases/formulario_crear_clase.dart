@@ -8,7 +8,6 @@ void mostrarFormularioCrearClase(BuildContext context) {
   DateTime? _fechaSeleccionada;
   final _descripcionController = TextEditingController();
   final _cuposController = TextEditingController();
-  final _idProfesorController = TextEditingController();
 
   showDialog(
     context: context,
@@ -33,12 +32,6 @@ void mostrarFormularioCrearClase(BuildContext context) {
                 TextField(
                   controller: _cuposController,
                   decoration: const InputDecoration(labelText: "Cupos"),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: _idProfesorController,
-                  decoration:
-                      const InputDecoration(labelText: "ID del Profesor"),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 16),
@@ -78,20 +71,17 @@ void mostrarFormularioCrearClase(BuildContext context) {
                   final nombre = _nombreController.text.trim();
                   final descripcion = _descripcionController.text.trim();
                   final cupos = int.tryParse(_cuposController.text);
-                  final idProfesor = int.tryParse(_idProfesorController.text);
 
                   if (nombre.isNotEmpty &&
                       _fechaSeleccionada != null &&
                       descripcion.isNotEmpty &&
-                      cupos != null &&
-                      idProfesor != null) {
+                      cupos != null) {
                     final nuevaClase = Clase(
                       idClase: 0,
                       nombreClase: nombre,
                       cupos: cupos,
                       horario: _fechaSeleccionada!,
                       descripcion: descripcion,
-                      idProfesor: idProfesor,
                     );
                     await provider.crearClase(nuevaClase);
                     Navigator.pop(context);

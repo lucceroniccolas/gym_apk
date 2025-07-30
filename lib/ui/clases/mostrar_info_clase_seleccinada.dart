@@ -11,7 +11,6 @@ void mostraInfoClaseSeleccinada(BuildContext context, Clase clase) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Nombre: ${clase.nombreClase}"),
-          Text("Profesor: ${clase.idProfesor}"),
           Text("Horario: ${clase.horario?.toString() ?? 'No definido'}"),
           Text("Cupos: ${clase.cupos}"),
           Text("Descripción: ${clase.descripcion ?? 'Sin descripción'}"),
