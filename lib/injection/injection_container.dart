@@ -16,6 +16,7 @@ import 'package:get_it/get_it.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 import 'package:gym_apk/domain/repository/repo_clases.dart';
 import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
+import 'package:gym_apk/domain/services/coordinador_inscripciones.dart';
 
 //casos de uso----Usuario----
 import 'package:gym_apk/domain/use_cases/gestionar_usuario/eliminar_usuario.dart';
@@ -43,8 +44,9 @@ import 'package:gym_apk/providers/clases_provider.dart';
 import 'package:gym_apk/providers/inscripcion_provider.dart';
 
 //Adaptadores
-import 'package:gym_apk/data/adapters/memory/clases.dart';
-import 'package:gym_apk/data/adapters/memory/inscripciones.dart';
+
+import 'package:gym_apk/data/adapters/hive/inscripcion_hive.dart';
+import 'package:gym_apk/data/adapters/hive/models/inscripcion_model.dart';
 //Adaptadores de memoria hive
 import 'package:gym_apk/data/adapters/hive/usuarios_hive.dart';
 import 'package:gym_apk/data/adapters/hive/models/usuario_hive.dart';
@@ -62,13 +64,21 @@ Future<void> init() async {
   getIt.registerLazySingleton<RepoUsuario>(() => HiveUsuarioImpl(usuariosBox));
   //--ADAPTADORES-- (Clases)
   final claseBox = await Hive.openBox<ClaseHive>('clasesBox');
+
   getIt.registerLazySingleton<RepoClases>(() => HiveClasesImpl(claseBox));
 
+  final inscripcionesBox =
+      await Hive.openBox<InscripcionHive>('inscripcionesBox');
   //--ADAPTADORES-- (inscripción)
-  getIt.registerLazySingleton<RepoInscripcion>(() => MemoriaInscripcionesImpl(
+
+  getIt.registerLazySingleton<RepoInscripcion>(
+      () => HiveInscripcionImpl(inscripcionesBox));
+
+  getIt.registerLazySingleton(() => CoordinadorInscripciones(
+        getIt<RepoInscripcion>(),
         getIt<RepoClases>(),
         getIt<RepoUsuario>(),
-      )); //le pasamos las instancias que ya registramos anteriormente para crear el adaptador de incripciones
+      ));
 
   _registarCasoDeUsoUsuario();
   _registrarCasoDeUsoClase();
@@ -114,8 +124,10 @@ void _registarCasoDeUsoUsuario() {
   getIt.registerLazySingleton(
       () => ObtenerUsuarioPorIdCDU(getIt<RepoUsuario>()));
 
-  getIt.registerLazySingleton(() => EliminarUsuarioCDU(getIt<RepoUsuario>(),
-      getIt<RepoInscripcion>(), getIt<CancelarInscripcionCDU>()));
+  getIt.registerLazySingleton(() => EliminarUsuarioCDU(
+        getIt<RepoUsuario>(),
+        getIt<CoordinadorInscripciones>(),
+      ));
 
   getIt.registerLazySingleton(
       () => ObtenerTodosLosUsuariosCDU(getIt<RepoUsuario>()));
@@ -133,10 +145,10 @@ void _registrarCasoDeUsoClase() {
 
 // --USE CASES--//(registration)
 void _registrarCasoDeUsoInscripciones() {
-  getIt.registerLazySingleton(() => CancelarInscripcionCDU(
-      getIt<RepoInscripcion>(), getIt<RepoClases>(), getIt<RepoUsuario>()));
-  getIt.registerLazySingleton(() => InscribirAlumnoEnClaseCDU(
-      getIt<RepoInscripcion>(), getIt<RepoClases>(), getIt<RepoUsuario>()));
+  getIt.registerLazySingleton(
+      () => CancelarInscripcionCDU(getIt<CoordinadorInscripciones>()));
+  getIt.registerLazySingleton(
+      () => InscribirAlumnoEnClaseCDU(getIt<CoordinadorInscripciones>()));
   getIt.registerLazySingleton(
       () => ObtenerClasesInscriptasDeUsuarioCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerUsuariosInscriptosCDU(getIt()));

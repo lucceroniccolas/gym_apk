@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_apk/data/adapters/hive/models/inscripcion_model.dart';
 import 'package:gym_apk/providers/inscripcion_provider.dart';
 import 'package:gym_apk/providers/usuario_provider.dart';
 import 'package:gym_apk/routes/app_routes.dart';
@@ -14,8 +15,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(UsuarioHiveAdapter());
+  Hive.registerAdapter(ClaseHiveAdapter());
   Hive.registerAdapter(
-      ClaseHiveAdapter()); // Registramos el adaptador de UsuarioHive
+      InscripcionHiveAdapter()); // Registramos el adaptador de UsuarioHive
   // Registramos el adaptador de ClaseHive
   await init(); //preparamos e inyectamos todas las dependecias necesarias antes
   //que arranque la apk
