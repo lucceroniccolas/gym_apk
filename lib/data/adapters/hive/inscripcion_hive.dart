@@ -29,7 +29,13 @@ class HiveInscripcionImpl implements RepoInscripcion {
   }
 
   @override
-  Future<void> eliminarInscripcion(int idUsuario, int idClase) {
-    return _box.delete(idUsuario.toString() + idClase.toString());
-  }
+  Future<void> eliminarInscripcion(int idUsuario, int idClase) async {
+    final keyToDelete = _box.values.firstWhere(
+      (insc) => insc.idUsuario == idUsuario && insc.idClase == idClase,
+      orElse: () => throw Exception("No se encontró la inscripción a eliminar."),
+    ).key;
+
+    await _box.delete(keyToDelete);
+}
+
 }
