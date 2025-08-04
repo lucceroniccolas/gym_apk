@@ -49,7 +49,7 @@ class CoordinadorInscripciones {
     // Aquí podrías agregar lógica adicional para verificar si el usuario cumple con los requisitos de la clase
     // y si la clase está activa, etc.
     // Agregar la inscripción al repositorio
-    clase.cupos - 1;
+    clase.cupos = clase.cupos - 1;
     await _repoInscripcion.agregarInscripcion(nuevaInscripcion);
     await _repoClases.actualizarClase(clase);
   }

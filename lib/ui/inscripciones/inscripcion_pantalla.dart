@@ -18,7 +18,7 @@ class InscripcionView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             BotonAccion(
-              texto: "Inscribir aluumno",
+              texto: "Inscribir alumno",
               onPressed: () {
                 Navigator.pushNamed(context, "/inscribirAlumno");
               },

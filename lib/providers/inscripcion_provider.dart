@@ -10,6 +10,8 @@ import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_usuarios_
 import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_inscripciones_cdu.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_usuario/obtener_todos_los_usuarios.dart';
 import 'package:gym_apk/ui/models/inscripcion_detallada.dart';
+import 'package:gym_apk/providers/clases_provider.dart';
+import 'package:gym_apk/injection/injection_container.dart';
 
 //Nota: las funciones en las cual cambiamos algo ya sea alta baja o modificación son funciones
 //que devuelven booleanos porque nos ayudan a saber si tuvo éxito o falló y tambien pueden
@@ -92,32 +94,91 @@ class InscripcionProvider extends ChangeNotifier {
     _setLoading(true);
 
     try {
+      // Aseguramos que las clases estén actualizadas
+      _clases = await _obtenerTodasLasClases.execute();
+
+      //Buscamos la clase
+      final clase = _clases.firstWhere(
+        (c) => c.idClase == idClase,
+        orElse: () => throw Exception("Clase no encontrada"),
+      );
+
+      //Verificamos cupos
+      if (clase.cupos <= 0) {
+        print("No hay cupos disponibles para esta clase");
+        return false;
+      }
+
+      //Inscribimos
       await _inscribirAlumnoEnClase.execute(idAlumno, idClase);
+
+      //Actualizamos los cupos en memoria
+      final claseActualizada = Clase(
+        idClase: clase.idClase,
+        nombreClase: clase.nombreClase,
+        descripcion: clase.descripcion,
+        cupos: clase.cupos - 1,
+        horario: clase.horario,
+      );
+
+      //Guardamos en la base
+      await getIt<ClasesProvider>().actualizarClase(claseActualizada);
+
+
+      //Refrescamos datos en memoria y UI
       await cargarDatos();
-      return (true);
+      notifyListeners();
+
+      return true;
     } catch (e) {
       print("No se pudo inscribir el Alumno a la clase $e");
-      return (false);
+      return false;
     } finally {
       _setLoading(false);
     }
   }
 
   Future<bool> cancelarInscripcion(int idUsuario, int idClase) async {
-    _setLoading(true);
-    try {
-      await _cancelarInscripcion.execute(idUsuario, idClase);
+  _setLoading(true);
+  try {
+    // 🔹 Aseguramos que las clases estén actualizadas
+    _clases = await _obtenerTodasLasClases.execute();
 
-      await cargarDatos();
+    // 🔹 Buscamos la clase
+    final clase = _clases.firstWhere(
+      (c) => c.idClase == idClase,
+      orElse: () => throw Exception("Clase no encontrada"),
+    );
 
-      return (true);
-    } catch (e) {
-      print("No se pudo cancelar la inscripcion $e");
-      return (false);
-    } finally {
-      _setLoading(false);
-    }
+    // 🔹 Cancelamos la inscripción
+    await _cancelarInscripcion.execute(idUsuario, idClase);
+
+    // 🔹 Actualizamos los cupos en memoria
+    final claseActualizada = Clase(
+      idClase: clase.idClase,
+      nombreClase: clase.nombreClase,
+      descripcion: clase.descripcion,
+      cupos: clase.cupos + 1,
+      horario: clase.horario,
+    );
+
+    // 🔹 Guardamos en base de datos
+    await getIt<ClasesProvider>().actualizarClase(claseActualizada);
+
+
+    // 🔹 Refrescamos datos y UI
+    await cargarDatos();
+    notifyListeners();
+
+    return true;
+  } catch (e) {
+    print("No se pudo cancelar la inscripcion $e");
+    return false;
+  } finally {
+    _setLoading(false);
   }
+}
+
 
   Future<void> obtenerInscriptosDeClase(int idUsuario) async {
     _setLoading(true);
