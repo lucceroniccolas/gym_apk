@@ -2,8 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_apk/providers/inscripcion_provider.dart';
 
-class CancelarInscripcionView extends StatelessWidget {
+class CancelarInscripcionView extends StatefulWidget {
   const CancelarInscripcionView({super.key});
+
+  @override
+  State<CancelarInscripcionView> createState() =>
+      _CancelarInscripcionViewState();
+}
+
+class _CancelarInscripcionViewState extends State<CancelarInscripcionView> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<InscripcionProvider>(context, listen: false).cargarDatos();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<InscripcionProvider>(context);
@@ -36,7 +51,7 @@ class CancelarInscripcionView extends StatelessWidget {
                           onPressed: () => Navigator.pop(context, false),
                         ),
                         TextButton(
-                          child: const Text("Si"),
+                          child: const Text("Sí"),
                           onPressed: () => Navigator.pop(context, true),
                         ),
                       ],
@@ -45,8 +60,9 @@ class CancelarInscripcionView extends StatelessWidget {
                   if (confirm == true) {
                     await provider.cancelarInscripcion(
                         insc.idUsuario, insc.idClase);
+                    await provider.cargarDatos(); // << 🔄 Recarga datos después
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Inscripcion cancelada ")),
+                      const SnackBar(content: Text("Inscripción cancelada")),
                     );
                   }
                 },

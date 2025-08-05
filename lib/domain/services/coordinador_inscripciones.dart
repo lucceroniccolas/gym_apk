@@ -17,19 +17,23 @@ class CoordinadorInscripciones {
   CoordinadorInscripciones(
       this._repoInscripcion, this._repoClases, this._repoUsuario);
 
+  // Método para inscribir a un usuario en una clase
+
   Future<void> inscribir(int idUsuario, int idClase) async {
     Usuario? usuario = await _repoUsuario.obtenerUsuarioPorId(idUsuario);
     if (usuario == null) {
       throw Exception("Usuario no encontrado");
     }
 
+    // Verificar si el usuario ha pagado la cuota del gimnasio
     _verificarUsuarioPago(usuario);
 
+    // Verificar si la clase existe
     Clase? clase = await _repoClases.obtenerClasePorId(idClase);
     if (clase == null) {
       throw Exception("Clase no encontrada");
     }
-
+    // Verificar si el usuario ya está inscrito en la clase y si hay cupos disponibles
     final inscripciones = await _repoInscripcion.obtenerInscripciones();
 
     final existeInscripcion = inscripciones.any((inscripcion) =>
@@ -41,19 +45,19 @@ class CoordinadorInscripciones {
     if (clase.cupos <= 0) {
       throw Exception("No hay cupos disponibles para esta clase");
     }
+
     Inscripcion nuevaInscripcion = Inscripcion(
         idInscripcion: 0, // El ID se asignará automáticamente en el repositorio
         idUsuario: idUsuario,
         idClase: idClase,
         fechaInscripcion: DateTime.now());
-    // Aquí podrías agregar lógica adicional para verificar si el usuario cumple con los requisitos de la clase
-    // y si la clase está activa, etc.
-    // Agregar la inscripción al repositorio
+
     clase.cupos = clase.cupos - 1;
     await _repoInscripcion.agregarInscripcion(nuevaInscripcion);
     await _repoClases.actualizarClase(clase);
   }
 
+//Metodo para cancelar la inscripción de un usuario en una clase
   Future<void> cancelar(int idUsuario, int idClase) async {
     final clase = await _repoClases.obtenerClasePorId(idClase);
     if (clase == null) throw Exception("La clase no existe");
@@ -64,6 +68,8 @@ class CoordinadorInscripciones {
     await _repoClases.actualizarClase(clase);
   }
 
+//Metodo para cancelar todas las inscripciones de un usuario
+//se utiliza para eliminar un usuario y cancelar todas sus inscripciones
   Future<void> cancelarTodasLasInscripcionesDeUsuario(int idUsuario) async {
     final inscripciones = await _repoInscripcion.obtenerInscripciones();
     final inscripcionesDelUsuario =
@@ -71,6 +77,29 @@ class CoordinadorInscripciones {
 
     for (final insc in inscripcionesDelUsuario) {
       await cancelar(insc.idUsuario, insc.idClase);
+    }
+  }
+
+//Metodo para cancelar una inscripción sin actualizar los cupos de la clase
+  // Est o puede ser útil si se desea cancelar una inscripción sin afectar el númerode cupos
+  Future<void> cancelarSinActualizarCupos(int idUsuario, int idClase) async {
+    final clase = await _repoClases.obtenerClasePorId(idClase);
+    if (clase == null) throw Exception("La clase no existe");
+
+    await _repoInscripcion.eliminarInscripcion(idUsuario, idClase);
+  }
+
+//Metodo para cancelar todas las inscripciones de una clase
+//se utiliza para borrar una clase y cancelar todas las inscripciones
+  Future<void> cancelarTodasLasInscripcionesDeClase(int idClase) async {
+    final inscripciones = await _repoInscripcion.obtenerInscripciones();
+    print("anda hasta acá");
+    final inscripcionesDeClase =
+        inscripciones.where((insc) => insc.idClase == idClase).toList();
+
+    for (final insc in inscripcionesDeClase) {
+      await cancelarSinActualizarCupos(insc.idUsuario, insc.idClase);
+      print("cancelo al menos 1 inscripcion");
     }
   }
 

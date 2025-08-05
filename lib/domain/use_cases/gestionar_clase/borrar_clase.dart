@@ -1,10 +1,12 @@
 import 'package:gym_apk/domain/repository/repo_clases.dart';
+import 'package:gym_apk/domain/services/coordinador_inscripciones.dart';
 
 class BorrarClaseCDU {
 //Inyeccion de dependecia Manual
   final RepoClases repoClases;
-  BorrarClaseCDU(
-      this.repoClases); //Permite que la clase no dependa de la implementacion DESACOPLA
+  final CoordinadorInscripciones _coordinadorInscripciones;
+  BorrarClaseCDU(this.repoClases,
+      this._coordinadorInscripciones); //Permite que la clase no dependa de la implementacion DESACOPLA
 //Inyeccion de dependecia Manual
   Future<bool> execute(int idClase) async {
     if (idClase < 0) {
@@ -15,7 +17,9 @@ class BorrarClaseCDU {
       throw Exception("Esta clase no existe");
     }
     try {
-      await repoClases.borarClase(claseExiste.idClase);
+      await _coordinadorInscripciones
+          .cancelarTodasLasInscripcionesDeClase(idClase);
+      await repoClases.borarClase(idClase);
       return true;
     } catch (e) {
       return false;

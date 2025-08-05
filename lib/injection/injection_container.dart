@@ -136,7 +136,7 @@ void _registarCasoDeUsoUsuario() {
 // --CASOS DE USO--//(Clases)
 void _registrarCasoDeUsoClase() {
   getIt.registerLazySingleton(() => CrearClaseCDU(getIt()));
-  getIt.registerLazySingleton(() => BorrarClaseCDU(getIt()));
+  getIt.registerLazySingleton(() => BorrarClaseCDU(getIt(), getIt()));
   getIt.registerLazySingleton(() => ModificarClaseCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerClasePorIdCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerTodasLasClasesCDU(getIt()));
