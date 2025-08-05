@@ -1,3 +1,5 @@
+//El Provider solo se encarga de gestionar el estado en memoria y notificar a la UI
+
 import 'package:flutter/material.dart';
 import 'package:gym_apk/domain/entities/clases.dart';
 import 'package:gym_apk/domain/entities/usuario.dart';
@@ -10,8 +12,7 @@ import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_usuarios_
 import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/obtener_inscripciones_cdu.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_usuario/obtener_todos_los_usuarios.dart';
 import 'package:gym_apk/ui/models/inscripcion_detallada.dart';
-import 'package:gym_apk/providers/clases_provider.dart';
-import 'package:gym_apk/injection/injection_container.dart';
+import 'package:collection/collection.dart';
 
 //Nota: las funciones en las cual cambiamos algo ya sea alta baja o modificación son funciones
 //que devuelven booleanos porque nos ayudan a saber si tuvo éxito o falló y tambien pueden
@@ -19,8 +20,8 @@ import 'package:gym_apk/injection/injection_container.dart';
 
 //declaracion
 class InscripcionProvider extends ChangeNotifier {
-  final CancelarInscripcionCDU _cancelarInscripcion;
   final InscribirAlumnoEnClaseCDU _inscribirAlumnoEnClase;
+  final CancelarInscripcionCDU _cancelarInscripcion;
   final ObtenerClasesInscriptasDeUsuarioCDU _obtenerClasesInscriptas;
   final ObtenerUsuariosInscriptosCDU _obtenerUsuariosInscriptos;
   final ObtenerInscripcionesCDU _obtenerInscripciones;
@@ -29,8 +30,8 @@ class InscripcionProvider extends ChangeNotifier {
 
 //dependecias
   InscripcionProvider(
-      this._cancelarInscripcion,
       this._inscribirAlumnoEnClase,
+      this._cancelarInscripcion,
       this._obtenerClasesInscriptas,
       this._obtenerUsuariosInscriptos,
       this._obtenerInscripciones,
@@ -74,10 +75,24 @@ class InscripcionProvider extends ChangeNotifier {
 
   List<InscripcionDetallada> get inscripcionesDetalladas {
     return _inscripciones.map((inscripcion) {
-      final usuario =
-          _usuarios.firstWhere((u) => u.idUsuario == inscripcion.idUsuario);
-      final clase = _clases.firstWhere((c) => c.idClase == inscripcion.idClase);
+      final usuario = _usuarios.firstWhereOrNull(
+        (u) => u.idUsuario == inscripcion.idUsuario,
+      );
 
+      final clase = _clases.firstWhereOrNull(
+        (c) => c.idClase == inscripcion.idClase,
+      );
+      if (usuario == null || clase == null) {
+        return InscripcionDetallada(
+          idInscripcion: inscripcion.idInscripcion,
+          idUsuario: inscripcion.idUsuario,
+          idClase: inscripcion.idClase,
+          nombreUsuario: "Usuario no encontrado",
+          nombreClase: "Clase no encontrada",
+          fechaInscripcion: inscripcion.fechaInscripcion,
+          pago: false,
+        );
+      }
       return InscripcionDetallada(
         idInscripcion: inscripcion.idInscripcion,
         idUsuario: inscripcion.idUsuario,
@@ -97,38 +112,12 @@ class InscripcionProvider extends ChangeNotifier {
       // Aseguramos que las clases estén actualizadas
       _clases = await _obtenerTodasLasClases.execute();
 
-      //Buscamos la clase
-      final clase = _clases.firstWhere(
-        (c) => c.idClase == idClase,
-        orElse: () => throw Exception("Clase no encontrada"),
-      );
-
-      //Verificamos cupos
-      if (clase.cupos <= 0) {
-        print("No hay cupos disponibles para esta clase");
-        return false;
-      }
-
-      //Inscribimos
+      // Inscribimos al alumno en la clase
       await _inscribirAlumnoEnClase.execute(idAlumno, idClase);
 
-      //Actualizamos los cupos en memoria
-      final claseActualizada = Clase(
-        idClase: clase.idClase,
-        nombreClase: clase.nombreClase,
-        descripcion: clase.descripcion,
-        cupos: clase.cupos - 1,
-        horario: clase.horario,
-      );
-
-      //Guardamos en la base
-      await getIt<ClasesProvider>().actualizarClase(claseActualizada);
-
-
-      //Refrescamos datos en memoria y UI
+      //Refrescamos datos en UI
       await cargarDatos();
       notifyListeners();
-
       return true;
     } catch (e) {
       print("No se pudo inscribir el Alumno a la clase $e");
@@ -139,46 +128,26 @@ class InscripcionProvider extends ChangeNotifier {
   }
 
   Future<bool> cancelarInscripcion(int idUsuario, int idClase) async {
-  _setLoading(true);
-  try {
-    // 🔹 Aseguramos que las clases estén actualizadas
-    _clases = await _obtenerTodasLasClases.execute();
+    _setLoading(true);
+    try {
+      // 🔹 Aseguramos que las clases estén actualizadas
+      _clases = await _obtenerTodasLasClases.execute();
 
-    // 🔹 Buscamos la clase
-    final clase = _clases.firstWhere(
-      (c) => c.idClase == idClase,
-      orElse: () => throw Exception("Clase no encontrada"),
-    );
+      // 🔹 Cancelamos la inscripción desde el coordinador (!ya actualiza cupos!)
+      await _cancelarInscripcion.execute(idUsuario, idClase);
 
-    // 🔹 Cancelamos la inscripción
-    await _cancelarInscripcion.execute(idUsuario, idClase);
+      // 🔹 Refrescamos datos y UI
+      await cargarDatos();
+      notifyListeners();
 
-    // 🔹 Actualizamos los cupos en memoria
-    final claseActualizada = Clase(
-      idClase: clase.idClase,
-      nombreClase: clase.nombreClase,
-      descripcion: clase.descripcion,
-      cupos: clase.cupos + 1,
-      horario: clase.horario,
-    );
-
-    // 🔹 Guardamos en base de datos
-    await getIt<ClasesProvider>().actualizarClase(claseActualizada);
-
-
-    // 🔹 Refrescamos datos y UI
-    await cargarDatos();
-    notifyListeners();
-
-    return true;
-  } catch (e) {
-    print("No se pudo cancelar la inscripcion $e");
-    return false;
-  } finally {
-    _setLoading(false);
+      return true;
+    } catch (e) {
+      print("No se pudo cancelar la inscripcion $e");
+      return false;
+    } finally {
+      _setLoading(false);
+    }
   }
-}
-
 
   Future<void> obtenerInscriptosDeClase(int idUsuario) async {
     _setLoading(true);

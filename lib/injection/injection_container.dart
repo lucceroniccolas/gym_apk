@@ -106,8 +106,8 @@ Future<void> init() async {
 //--PROVIDERS--(Inscripcion)
   getIt.registerFactory<InscripcionProvider>(
     () => InscripcionProvider(
-      getIt<CancelarInscripcionCDU>(),
       getIt<InscribirAlumnoEnClaseCDU>(),
+      getIt<CancelarInscripcionCDU>(),
       getIt<ObtenerClasesInscriptasDeUsuarioCDU>(),
       getIt<ObtenerUsuariosInscriptosCDU>(),
       getIt<ObtenerInscripcionesCDU>(),

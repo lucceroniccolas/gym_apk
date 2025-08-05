@@ -62,8 +62,6 @@ class ClasesProvider extends ChangeNotifier {
   bool get isLoading =>
       _isLoading; //Getter público para saber si el Provider está realizando una operación.
 
-  
-
   Future<bool> crearClase(Clase nuevaClase) async {
     _isLoading = true;
     notifyListeners();
@@ -128,7 +126,8 @@ class ClasesProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-   Future<void> actualizarClase(Clase claseActualizada) async {
+
+  Future<void> actualizarClase(Clase claseActualizada) async {
     try {
       await _modificarClase.execute(claseActualizada.idClase, claseActualizada);
       await obtenerClases(); // vuelve a cargar y notifica

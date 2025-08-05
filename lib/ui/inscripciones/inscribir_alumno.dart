@@ -105,6 +105,7 @@ class _InscribirAlumnoViewState extends State<InscribirAlumnoView> {
                     _usuarioSeleccionado!.idUsuario,
                     _claseSeleccionada!.idClase,
                   );
+                  await clasesProvider.obtenerClases();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(resultado

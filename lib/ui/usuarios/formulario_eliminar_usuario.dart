@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_apk/providers/inscripcion_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:gym_apk/providers/usuario_provider.dart';
 
@@ -15,9 +16,12 @@ void mostrarDialogoEliminarUsuario(BuildContext context, int idUsuario) {
         ),
         ElevatedButton(
           onPressed: () async {
+            final inscripcionProvider =
+                Provider.of<InscripcionProvider>(context, listen: false);
+            await inscripcionProvider.cargarDatos();
+
             final provider =
                 Provider.of<UsuarioProvider>(context, listen: false);
-
             await provider.eliminarUsuario(idUsuario);
 
             ScaffoldMessenger.of(context).showSnackBar(
