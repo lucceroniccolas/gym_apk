@@ -1,7 +1,6 @@
 import 'package:gym_apk/domain/use_cases/gestionar_clase/borrar_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/modificar_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_clase_por_id.dart';
-import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_horario_de_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/crear_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_clases.dart';
 import 'package:gym_apk/domain/entities/clases.dart';
@@ -15,7 +14,6 @@ class ClasesProvider extends ChangeNotifier {
   final ModificarClaseCDU _modificarClase;
   final ObtenerClasePorIdCDU _obtenerClasePorId;
   final ObtenerTodasLasClasesCDU _obtenerTodasLasClases;
-  final ObtenerHorarioPorIdDeClaseCDU _obtenerHorarioPorIdDeClase;
 
   ClasesProvider(
       //Constructor del Provider
@@ -23,7 +21,6 @@ class ClasesProvider extends ChangeNotifier {
       this._eliminarClase, //dependecias
       this._modificarClase,
       this._obtenerClasePorId,
-      this._obtenerHorarioPorIdDeClase,
       this._obtenerTodasLasClases);
 
   List<Clase> _clases =
@@ -48,11 +45,12 @@ class ClasesProvider extends ChangeNotifier {
   DateTime? _horarioClase; //Guarda el horario de la clase seleccionada.
 
   DateTime? get horarioClase =>
-      _horarioClase; //Getter público para obtener el horario de la clase seleccionada.
+      _horarioClase; //Getter público para obtener el horario
+  // de la clase seleccionada.
 
   set horarioClase(DateTime? nuevoHorario) {
-    _horarioClase =
-        nuevoHorario; //setter publico para poder modificar los horarios de clase
+    _horarioClase = nuevoHorario; //setter publico para poder modificar
+    // los horarios de clase
     notifyListeners();
   }
 
@@ -157,19 +155,6 @@ class ClasesProvider extends ChangeNotifier {
       _claseSeleccionada = await _obtenerClasePorId.execute(idClase);
     } catch (e) {
       _claseSeleccionada = null;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> obtenerHorarioPorIdDeClase(int idClase) async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      _horarioClase = await _obtenerHorarioPorIdDeClase.execute(idClase);
-    } catch (e) {
-      _horarioClase = null;
     } finally {
       _isLoading = false;
       notifyListeners();

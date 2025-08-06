@@ -4,16 +4,21 @@ import 'package:gym_apk/providers/clases_provider.dart';
 import 'package:provider/provider.dart';
 
 void mostrarFormularioModificarClase(BuildContext context, Clase clase) {
-  final _nombreController = TextEditingController(text: clase.nombreClase);
-  DateTime? _fechaSeleccionada = clase.horario;
-  final _descripcionController = TextEditingController(text: clase.descripcion);
-
-  final _cuposController = TextEditingController(text: clase.cupos.toString());
+  //accedemos al provider de clases
+  final provider = Provider.of<ClasesProvider>(context);
+  //cargamos la fecha actual de la clase en el provider
+  provider.horarioClase = clase.horario;
+  //controladores de texto para los campos del formulario
+  //inicializamos los controladores con los valores actuales de la clase
+  final nombreController = TextEditingController(text: clase.nombreClase);
+  final descripcionController = TextEditingController(text: clase.descripcion);
+  final cuposController = TextEditingController(text: clase.cupos.toString());
 
   showDialog(
     context: context,
     builder: (context) {
       return StatefulBuilder(
+        //solo se REconstruye si hacés setState()
         builder: (context, setState) {
           return AlertDialog(
             title: const Text('Modificar Clase'),
@@ -21,38 +26,43 @@ void mostrarFormularioModificarClase(BuildContext context, Clase clase) {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: _nombreController,
+                  controller: nombreController,
                   decoration:
                       const InputDecoration(labelText: 'Nombre de la clase'),
                 ),
                 TextField(
-                  controller: _cuposController,
+                  controller: cuposController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(labelText: "Cupos"),
                 ),
                 TextField(
-                  controller: _descripcionController,
+                  controller: descripcionController,
                   decoration: const InputDecoration(labelText: "Descripción"),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () async {
                     final fecha = await showDatePicker(
+                      //muestra el date picker (selector de fecha)
                       context: context,
-                      initialDate: _fechaSeleccionada ?? DateTime.now(),
+                      initialDate: provider.horarioClase ?? DateTime.now(),
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2030),
                     );
                     if (fecha != null) {
                       setState(() {
-                        _fechaSeleccionada = fecha;
+                        //Llama a setState local para que el
+                        //texto del botón se actualice
+                        provider.horarioClase =
+                            fecha; //guardamos la fecha seleccionada en el provider
                       });
                     }
                   },
+                  //mostramos la fecha seleccionada o un texto por defecto
                   child: Text(
-                    _fechaSeleccionada == null
+                    provider.horarioClase == null
                         ? "Seleccionar fecha"
-                        : "Fecha: ${_fechaSeleccionada!.toLocal()}"
+                        : "Fecha: ${provider.horarioClase!.toLocal()}"
                             .split(' ')[0],
                   ),
                 ),
@@ -60,31 +70,34 @@ void mostrarFormularioModificarClase(BuildContext context, Clase clase) {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  provider.horarioClase = null; //limpiamos el horario
+                  Navigator.pop(context); //cerramos el dialogo
+                },
                 child: const Text('Cancelar'),
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final provider =
-                      Provider.of<ClasesProvider>(context, listen: false);
-
-                  final nombre = _nombreController.text.trim();
-                  final descripcion = _descripcionController.text.trim();
-
-                  final cupos = int.tryParse(_cuposController.text.trim());
+                  //obtenemos los valores de los campos del formulario
+                  //usamos trim para eliminar espacios al inicio y al final
+                  final nombre = nombreController.text.trim();
+                  final descripcion = descripcionController.text.trim();
+                  final cupos = int.tryParse(cuposController.text.trim());
 
                   if (nombre.isNotEmpty &&
                       descripcion.isNotEmpty &&
-                      _fechaSeleccionada != null &&
+                      provider.horarioClase != null &&
                       cupos != null) {
+                    //usamos copyWith para crear una nueva instancia de Clase con los cambios
                     final claseModificada = clase.copyWith(
                         nombreClase: nombre,
                         descripcion: descripcion,
-                        horario: _fechaSeleccionada,
+                        horario: provider.horarioClase,
                         cupos: cupos);
 
                     await provider.modificarClase(
                         clase.idClase, claseModificada);
+                    provider.horarioClase = null; //limpiamos el horario
                     Navigator.pop(context);
                   }
                 },

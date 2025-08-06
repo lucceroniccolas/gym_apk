@@ -103,40 +103,6 @@ class CoordinadorInscripciones {
     }
   }
 
-  Future<List<Usuario>> obtenerUsuariosInscriptosDeClase(int idClase) async {
-    final inscripciones = await _repoInscripcion.obtenerInscripciones();
-    final idsUsuarios = inscripciones
-        .where((i) => i.idClase == idClase)
-        .map((i) => i.idUsuario)
-        .toSet(); // evita duplicados
-
-    final usuarios = <Usuario>[];
-
-    for (final id in idsUsuarios) {
-      final usuario = await _repoUsuario.obtenerUsuarioPorId(id);
-      if (usuario != null) usuarios.add(usuario);
-    }
-
-    return usuarios;
-  }
-
-  Future<List<Clase>> obtenerClasesInscriptasDeUsuario(int idUsuario) async {
-    final inscripciones = await _repoInscripcion.obtenerInscripciones();
-    final idsClases = inscripciones
-        .where((i) => i.idUsuario == idUsuario)
-        .map((i) => i.idClase)
-        .toSet();
-
-    final clases = <Clase>[];
-
-    for (final id in idsClases) {
-      final clase = await _repoClases.obtenerClasePorId(id);
-      if (clase != null) clases.add(clase);
-    }
-
-    return clases;
-  }
-
   void _verificarUsuarioPago(Usuario usuario) {
     if (!usuario.pago) {
       throw Exception("El usuario no pagó la cuota del gimnasio");

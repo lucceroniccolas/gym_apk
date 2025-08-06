@@ -4,8 +4,8 @@ import 'package:gym_apk/providers/clases_provider.dart';
 import 'package:provider/provider.dart';
 
 void mostrarFormularioCrearClase(BuildContext context) {
+  final provider = Provider.of<ClasesProvider>(context, listen: false);
   final _nombreController = TextEditingController();
-  DateTime? _fechaSeleccionada;
   final _descripcionController = TextEditingController();
   final _cuposController = TextEditingController();
 
@@ -14,6 +14,7 @@ void mostrarFormularioCrearClase(BuildContext context) {
     builder: (context) {
       return StatefulBuilder(
         builder: (context, setState) {
+          //setState para actualizar el estado local del dialogo
           return AlertDialog(
             title: const Text('Crear Clase'),
             content: Column(
@@ -45,14 +46,14 @@ void mostrarFormularioCrearClase(BuildContext context) {
                     );
                     if (fecha != null) {
                       setState(() {
-                        _fechaSeleccionada = fecha;
+                        provider.horarioClase = fecha;
                       });
                     }
                   },
                   child: Text(
-                    _fechaSeleccionada == null
+                    provider.horarioClase == null
                         ? "Seleccionar fecha"
-                        : "Fecha: ${_fechaSeleccionada!.toLocal()}"
+                        : "Fecha: ${provider.horarioClase!.toLocal()}"
                             .split(' ')[0],
                   ),
                 ),
@@ -73,14 +74,14 @@ void mostrarFormularioCrearClase(BuildContext context) {
                   final cupos = int.tryParse(_cuposController.text);
 
                   if (nombre.isNotEmpty &&
-                      _fechaSeleccionada != null &&
+                      provider.horarioClase != null &&
                       descripcion.isNotEmpty &&
                       cupos != null) {
                     final nuevaClase = Clase(
                       idClase: 0,
                       nombreClase: nombre,
                       cupos: cupos,
-                      horario: _fechaSeleccionada!,
+                      horario: provider.horarioClase!,
                       descripcion: descripcion,
                     );
                     await provider.crearClase(nuevaClase);

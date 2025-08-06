@@ -2,10 +2,13 @@
 
 //patrón de diseño que centraliza la creación y acceso de servicios
 
-//Inyectar dependencias sin pasar objetos a mano.
-//Reducir acoplamiento entre capas.
-//Mejorar testeo y escalabilidad.
+//Inyectamos todas las dependencias del proyecto en un solo lugar
 
+//----------------
+//desacopla la creacion de objetos.
+//----------------
+
+//Mejora escalabilidad.
 //Hace más fácil el testing.
 //Limpia el codigo en el main y en los providers
 
@@ -16,6 +19,8 @@ import 'package:get_it/get_it.dart';
 import 'package:gym_apk/domain/repository/repo_usuario.dart';
 import 'package:gym_apk/domain/repository/repo_clases.dart';
 import 'package:gym_apk/domain/repository/repo_inscripcion.dart';
+
+//---Coordinador de inscripciones---
 import 'package:gym_apk/domain/services/coordinador_inscripciones.dart';
 
 //casos de uso----Usuario----
@@ -30,7 +35,6 @@ import 'package:gym_apk/domain/use_cases/gestionar_clase/crear_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/modificar_clase.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_clase_por_id.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_clases.dart';
-import 'package:gym_apk/domain/use_cases/gestionar_clase/obtener_horario_de_clase.dart';
 //Casos de uso---Inscripciones---
 import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/cancelar_inscripcion_cdu.dart';
 import 'package:gym_apk/domain/use_cases/gestionar_inscripcion/inscribir_alumno_en_clase_cdu.dart';
@@ -43,13 +47,14 @@ import 'package:gym_apk/providers/usuario_provider.dart';
 import 'package:gym_apk/providers/clases_provider.dart';
 import 'package:gym_apk/providers/inscripcion_provider.dart';
 
-//Adaptadores
+//---Adaptadores de base de datos---
 
 import 'package:gym_apk/data/adapters/hive/inscripcion_hive.dart';
 import 'package:gym_apk/data/adapters/hive/models/inscripcion_model.dart';
-//Adaptadores de memoria hive
+
 import 'package:gym_apk/data/adapters/hive/usuarios_hive.dart';
 import 'package:gym_apk/data/adapters/hive/models/usuario_hive.dart';
+
 import 'package:gym_apk/data/adapters/hive/clases_hive.dart';
 import 'package:gym_apk/data/adapters/hive/models/clase_model.dart';
 import 'package:hive/hive.dart';
@@ -57,33 +62,41 @@ import 'package:hive/hive.dart';
 final getIt = GetIt.instance;
 
 Future<void> init() async {
-  // Esto significa: "Cuando alguien pida un RepoUsuario, devolvé esta instancia de HiveUsuarioImpl"
-  //--ADAPTADORES--  (Usuarios)
-  //Instancia única "perezosa" (adaptadores)
+//Registro de cajas de Hive
   final usuariosBox = await Hive.openBox<UsuarioHive>('usuariosBox');
-  getIt.registerLazySingleton<RepoUsuario>(() => HiveUsuarioImpl(usuariosBox));
-  //--ADAPTADORES-- (Clases)
   final claseBox = await Hive.openBox<ClaseHive>('clasesBox');
+  final inscripcionesBox =
+      await Hive.openBox<InscripcionHive>('inscripcionesBox');
+
+//Abrimos las cajas de Hive para poder usarlas como almacenamiento local
+
+// Esto significa: "Cuando alguien pida un RepoUsuario,
+// devolvé esta instancia de HiveImpl"
+//Se usan registerLazySingleton, que crea una única instancia la primera vez que se necesita.
+//--ADAPTADORES-- (Usuarios)
+
+  getIt.registerLazySingleton<RepoUsuario>(() => HiveUsuarioImpl(usuariosBox));
+
+  //--ADAPTADORES-- (Clases)
 
   getIt.registerLazySingleton<RepoClases>(() => HiveClasesImpl(claseBox));
 
-  final inscripcionesBox =
-      await Hive.openBox<InscripcionHive>('inscripcionesBox');
   //--ADAPTADORES-- (inscripción)
 
   getIt.registerLazySingleton<RepoInscripcion>(
       () => HiveInscripcionImpl(inscripcionesBox));
 
+//Registramos el coordinador de inscripciones
+//servicio de dominio que maneja la lógica de inscripciones compleja
   getIt.registerLazySingleton(() => CoordinadorInscripciones(
         getIt<RepoInscripcion>(),
         getIt<RepoClases>(),
         getIt<RepoUsuario>(),
       ));
 
-  _registarCasoDeUsoUsuario();
-  _registrarCasoDeUsoClase();
-  _registrarCasoDeUsoInscripciones();
-
+//Registramos los providers
+//Los providers reciben los casos de uso correspondientes como parámetros del constructor.
+//--PROVIDERS--(Usuario)
   getIt.registerFactory<UsuarioProvider>(() => UsuarioProvider(
         getIt<CrearusuarioCDU>(),
         getIt<EliminarUsuarioCDU>(),
@@ -99,7 +112,6 @@ Future<void> init() async {
       getIt<BorrarClaseCDU>(),
       getIt<ModificarClaseCDU>(),
       getIt<ObtenerClasePorIdCDU>(),
-      getIt<ObtenerHorarioPorIdDeClaseCDU>(),
       getIt<ObtenerTodasLasClasesCDU>(),
     ),
   );
@@ -115,42 +127,45 @@ Future<void> init() async {
       getIt<ObtenerTodasLasClasesCDU>(),
     ),
   );
+
+  //registramos los casos de uso
+  _registarCasoDeUsoUsuario();
+  _registrarCasoDeUsoClase();
+  _registrarCasoDeUsoInscripciones();
 }
 
-// --CASOS DE USO--//(Usuario)
+// --CASOS DE USO--//(usuario)
 void _registarCasoDeUsoUsuario() {
   getIt.registerLazySingleton(() => CrearusuarioCDU(getIt<RepoUsuario>()));
   getIt.registerLazySingleton(() => ModificarUsuarioCDU(getIt<RepoUsuario>()));
   getIt.registerLazySingleton(
       () => ObtenerUsuarioPorIdCDU(getIt<RepoUsuario>()));
-
   getIt.registerLazySingleton(() => EliminarUsuarioCDU(
         getIt<RepoUsuario>(),
         getIt<CoordinadorInscripciones>(),
       ));
-
   getIt.registerLazySingleton(
       () => ObtenerTodosLosUsuariosCDU(getIt<RepoUsuario>()));
 }
 
-// --CASOS DE USO--//(Clases)
+// --CASOS DE USO--//(clase)
 void _registrarCasoDeUsoClase() {
   getIt.registerLazySingleton(() => CrearClaseCDU(getIt()));
   getIt.registerLazySingleton(() => BorrarClaseCDU(getIt(), getIt()));
   getIt.registerLazySingleton(() => ModificarClaseCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerClasePorIdCDU(getIt()));
   getIt.registerLazySingleton(() => ObtenerTodasLasClasesCDU(getIt()));
-  getIt.registerLazySingleton(() => ObtenerHorarioPorIdDeClaseCDU(getIt()));
 }
 
-// --USE CASES--//(registration)
+// --USE CASES--//(inscripciones)
 void _registrarCasoDeUsoInscripciones() {
   getIt.registerLazySingleton(
       () => CancelarInscripcionCDU(getIt<CoordinadorInscripciones>()));
   getIt.registerLazySingleton(
       () => InscribirAlumnoEnClaseCDU(getIt<CoordinadorInscripciones>()));
   getIt.registerLazySingleton(
-      () => ObtenerClasesInscriptasDeUsuarioCDU(getIt()));
-  getIt.registerLazySingleton(() => ObtenerUsuariosInscriptosCDU(getIt()));
+      () => ObtenerClasesInscriptasDeUsuarioCDU(getIt(), getIt()));
+  getIt.registerLazySingleton(
+      () => ObtenerUsuariosInscriptosCDU(getIt(), getIt()));
   getIt.registerLazySingleton(() => ObtenerInscripcionesCDU(getIt()));
 }

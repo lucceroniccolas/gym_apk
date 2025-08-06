@@ -11,7 +11,6 @@ abstract class RepoClases {
   Future<void> modificarClase(int idClase, Clase claseModificada);
   Future<List<Clase>> obtenerClases();
   Future<Clase?> obtenerClasePorId(int idClase);
-  Future<DateTime?> obtenerHorariosPorIdClase(int idClase);
   Future<void> actualizarClase(Clase clase);
 }
 //qué hace Future<void>:

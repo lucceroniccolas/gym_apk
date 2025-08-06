@@ -22,7 +22,7 @@ class EliminarUsuarioCDU {
       await _repoUsuario.borrarUsuario(idUsuario);
       return true;
     } catch (e) {
-      return false;
+      throw Exception("Error al eliminar el usuario: $e");
     }
   }
 }

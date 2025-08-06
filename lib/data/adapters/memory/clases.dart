@@ -67,12 +67,4 @@ class MemoriaClasesImpl implements RepoClases {
   Future<List<Clase>> obtenerClases() async {
     return _clases;
   }
-
-  @override
-  Future<DateTime?> obtenerHorariosPorIdClase(int idClase) async {
-    final clase = _clases.firstWhere(
-      (clase) => clase.idClase == idClase,
-    );
-    return clase.horario;
-  }
 }

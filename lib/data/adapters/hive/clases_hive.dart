@@ -49,9 +49,4 @@ class HiveClasesImpl implements RepoClases {
   Future<List<Clase>> obtenerClases() async {
     return _box.values.map((model) => model.toEntity()).toList();
   }
-
-  @override
-  Future<DateTime?> obtenerHorariosPorIdClase(int idClase) async {
-    return _box.get(idClase)?.horario;
-  }
 }
