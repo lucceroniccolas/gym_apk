@@ -60,12 +60,13 @@ class CoordinadorInscripciones {
 //Metodo para cancelar la inscripción de un usuario en una clase
   Future<void> cancelar(int idUsuario, int idClase) async {
     final clase = await _repoClases.obtenerClasePorId(idClase);
-    if (clase == null) throw Exception("La clase no existe");
-
+    //siempre eliminamos la inscripcion, incluso si la clase no existe
     await _repoInscripcion.eliminarInscripcion(idUsuario, idClase);
 
-    clase.cupos += 1;
-    await _repoClases.actualizarClase(clase);
+    if (clase != null) {
+      clase.cupos += 1;
+      await _repoClases.actualizarClase(clase);
+    }
   }
 
 //Metodo para cancelar todas las inscripciones de un usuario
